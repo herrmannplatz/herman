@@ -3,6 +3,6 @@ window.herman = window.herman || {};
 
 (function(herman) {
 
-	console.log('herman, yay!')
+	// TODO inheritance pattern
 
 })(window.herman);

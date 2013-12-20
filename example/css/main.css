@@ -98,11 +98,45 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-#d {
+#stage {
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    position: absolute;
+}
+
+.node {
     width: 100px;
     height: 100px;
-    background-color: red;
+    background-color: white;
     position: absolute;
+}
+
+/* site */
+
+.container {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.stage {
+    width: 47.5%;
+    height: 400px;
+    float: left;
+    background-color: gray;
+}
+
+.stage:first-child {
+    margin-right: 5%;
+}
+
+@media only screen and (max-width: 768px) {
+    /* Style adjustments for viewports that meet the condition */
+    .stage {
+        width: 100%;
+        margin-top: 5%;
+    }
 }
 
 

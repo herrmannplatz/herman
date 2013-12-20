@@ -19,13 +19,16 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div id="d"></div>
+        <div class="container clearfix">
+            <div class="dom stage"></div>
+            <div class="canvas stage">
+                <canvas id="canvas" width="400" height="400"></canvas>
+            </div>
+        </div>       
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="js/plugins.js"></script>
-        <script src="../src/matrix.js"></script>
-        <script src="../src/node.js"></script>
+        <script src="../build/herman.min.js"></script>
         <script src="js/main.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
