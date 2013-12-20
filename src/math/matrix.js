@@ -125,7 +125,7 @@ window.herman = window.herman || {};
 		 * @return {[type]}       [description]
 		 */
 		transform : function(tx, ty, angle, scale) {
-			return this.translate(tx, ty).rotate(angle).scale(scale);
+			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
 		},
 
 		/**
