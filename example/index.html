@@ -11,24 +11,22 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.7.1.min.js"></script>
+        <script src="js/vendor/modernizr-2.7.1.min.js"></script> 
     </head>
-    <body>
+    <body onload="init()">
         <!--[if lt IE 8]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <!-- Add your site or application content here -->
         <div class="container clearfix">
-            <div class="dom stage"></div>
+            <div id="domStage" class="dom stage"></div>
             <div class="canvas stage">
                 <canvas id="canvas" width="400" height="400"></canvas>
             </div>
         </div>       
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="../build/herman.min.js"></script>
+        <script src="../build/herman.js"></script>
         <script src="js/main.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

@@ -1,9 +1,7 @@
 
-window.herman = window.herman || {};
+herman.createModule('Matrix',function(){
 
-(function(herman) {
-
-	// TODO chaining?
+	// TODO scaleX, scaleY or scaleNonUniform
 
 	var DEG_TO_RAD = Math.PI/180;
 
@@ -18,20 +16,17 @@ window.herman = window.herman || {};
 	 * | a31 a32 a33 |
 	 * 
 	 */
-	herman.Matrix = function() {
-		//TODO param
-		this.a11 = 1;
+	function Matrix() {
+		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
+		this.a11 = 1; 
 		this.a12 = 0;
 		this.a13 = 0;
 		this.a21 = 0;
 		this.a22 = 1;
 		this.a23 = 0;
-		this.a31 = 0; // remove?
-		this.a32 = 0; // remove?
-		this.a33 = 1; // remove?
 	}
 
-	herman.Matrix.prototype = {
+	Matrix.prototype = {
 		
 		/**
 		 * [translate description]
@@ -47,33 +42,20 @@ window.herman = window.herman || {};
 
 		/**
 		 * [rotate description]
-		 * @param  {Number} angle
+		 * @param  {Number} angle radians
 		 * @return {[type]}
 		 */
 		rotate : function(angle) {
-			angle = angle*DEG_TO_RAD; // or use radians?
-			var sin = Math.sin(angle).toFixed(ACCURACY);
-			var cos = Math.cos(angle).toFixed(ACCURACY);
-
+			angle = (angle*DEG_TO_RAD).toFixed(ACCURACY); // or use radians?
+			var sin = Math.sin(angle);
+			var cos = Math.cos(angle);
 			var a11 = this.a11;
-			// var a12 = this.a12; // remove?
-			// var a13 = this.a13;
 			var a21 = this.a21;
-			// var a22 = this.a22; // remove?
-			// var a23 = this.a23;
-			// var a31 = this.a31;
-			// var a32 = this.a32;
-			// var a33 = this.a33;
 
-			this.a11 = (cos*a11) + (sin*this.a12); //+ (0*a13);
-			this.a12 = (-sin*a11) + (cos*this.a12); // + (0*a13);
-			// this.a13 = (0*a11) + (0*a12) + (1*a13); 
-			this.a21 = (cos*a21) + (sin*this.a22);//  + (0*a23);
-			this.a22 = (-sin*a21) + (cos*this.a22);//  + (0*a23);
-			// this.a23 = (0*a21) + (0*a22) + (1*a23); 
-			// this.a31 = (cos*a31) + (sin*a32) + (0*a33);
-			// this.a32 = (-sin*a31) + (cos*a32) + (0*a33);
-			// this.a33 = (0*a31) + (0*a32) + (1*a33); 
+			this.a11 = (cos*a11) + (sin*this.a12); 
+			this.a12 = (-sin*a11) + (cos*this.a12); 
+			this.a21 = (cos*a21) + (sin*this.a22);
+			this.a22 = (-sin*a21) + (cos*this.a22); 
 			return this;
 		},
 
@@ -83,36 +65,10 @@ window.herman = window.herman || {};
 		 * @return {[type]}
 		 */
 		scale : function(scale) {
-			// var a11 = this.a11;
-			// var a12 = this.a12; 
-			// var a13 = this.a13;
-			// var a21 = this.a21;
-			// var a22 = this.a22;
-			// var a23 = this.a23;
-			// var a31 = this.a31;
-			// var a32 = this.a32;
-			// var a33 = this.a33;
-
-			this.a11 *= scale; // this.a11 = (scale*a11) + (0*a12)+ (0*a13);
-			this.a12 *= scale; // this.a12 = (0*a11) + (scale*a12) + (0*a13); 
-			// this.a13 = (0*a11) + (0*a12) + (1*a13);
-			this.a21 *= scale; // this.a21 = (scale*a21) + (0*a22) + (0*a23);
-			this.a22 *= scale; // this.a22 = (0*a21) + (scale*a22) + (0*a23);
-			// this.a23 = (0*a21) + (0*a22) + (1*a23);
-			// this.a31 = (scale*a31) + (0*a32) + (0*a33);
-			// this.a32 = (0*a31) + (scale*a32) + (0*a33);
-			// this.a33 = (0*a31) + (0*a32) + (1*a33);
-			return this;
-		},
-
-		/**
-		 * [scaleNonUniform description]
-		 * @param  {[type]} scaleX [description]
-		 * @param  {[type]} scaleY [description]
-		 * @return {[type]}        [description]
-		 */
-		scaleNonUniform : function(scaleX, scaleY) {
-			// TODO
+			this.a11 *= scale; 
+			this.a12 *= scale;  
+			this.a21 *= scale; 
+			this.a22 *= scale; 
 			return this;
 		},
 
@@ -144,25 +100,30 @@ window.herman = window.herman || {};
 		multiply : function(m) {
 			var a11 = this.a11;
 			var a12 = this.a12; 
-			var a13 = this.a13;
 			var a21 = this.a21;
 			var a22 = this.a22;
-			var a23 = this.a23;
-			var a31 = this.a31; // 0
-			var a32 = this.a32; // 0
-			var a33 = this.a33; // 1
 
-			this.a11 = (a11*m.a11) + (a12*m.a21) + (a13*m.a31);
-			this.a12 = (a11*m.a12) + (a12*m.a22) + (a13*m.a32); 
-			this.a13 = (a11*m.a13) + (a12*m.a23) + (a13*m.a33); 
+			this.a11 = (a11*m.a11) + (a12*m.a21);
+			this.a12 = (a11*m.a12) + (a12*m.a22); 
+			this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
 
-			this.a21 = (a21*m.a11) + (a22*m.a21) + (a23*m.a31);
-			this.a22 = (a21*m.a12) + (a22*m.a22) + (a23*m.a32);
-			this.a23 = (a21*m.a13) + (a22*m.a23) + (a23*m.a33);
+			this.a21 = (a21*m.a11) + (a22*m.a21);
+			this.a22 = (a21*m.a12) + (a22*m.a22);
+			this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+			return this;
+		},
 
-			this.a31 = (a31*m.a11) + (a32*m.a21) + (a33*m.a31);
-			this.a32 = (a31*m.a12) + (a32*m.a22) + (a33*m.a32);
-			this.a33 = (a31*m.a13) + (a32*m.a23) + (a33*m.a33);
+		/**
+		 * [identity description]
+		 * @return {[type]} [description]
+		 */
+		identity : function() {
+			this.a11 = 1; 
+			this.a12 = 0;
+			this.a13 = 0;
+			this.a21 = 0;
+			this.a22 = 1;
+			this.a23 = 0;
 			return this;
 		},
 
@@ -170,12 +131,15 @@ window.herman = window.herman || {};
 		 * [toString description]
 		 * @return {[type]}
 		 */
-		log : function() {
-			return 	this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
+		print : function() {
+			return 	'matrix' + '\n' +
+					this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
 					this.a21 + ' ' + this.a22 + ' ' + this.a23 + '\n' + 
-					this.a31 + ' ' + this.a32 + ' ' + this.a33 + '\n';
+					'[0]'	 + ' ' + '[0]'	  + ' ' + '[1]'	   + '\n';
 		}
 
 	};
 
-})(window.herman);
+	return Matrix;
+
+});

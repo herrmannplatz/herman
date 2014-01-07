@@ -3,15 +3,60 @@ window.herman = window.herman || {};
 
 (function(herman) {
 
-	// TODO inheritance pattern
+	herman.VERSION = 0.1;
+
+	/**
+	 * [namespace description]
+	 * @param  {[type]} namespace [description]
+	 * @return {[type]}           [description]
+	 */
+	herman.createModule = function(namespace, func) {
+		var ns = namespace.split('.');
+		var module = ns.pop();
+
+		if(ns.length > 1) {			
+			var o = herman;
+
+			if(ns[0] === 'herman') {
+				ns.shift();
+			}
+
+			for(var i = 0; i < ns.length; i++){
+				o = o[ns[i]] = o[ns[i]] || {};
+			}	
+		} 
+		herman[module] = func.call(this);
+	};
+
+	/**
+	 * [inherits description]
+	 * @param  {[type]} child  [description]
+	 * @param  {[type]} parent [description]
+	 * @return {[type]}        [description]
+	 */
+	herman.inherits = function inheritPrototype(child, parent) {
+	    var o = Object.create(parent.prototype);
+	    o.constructor = child;
+	    child.prototype = o;
+	    child.prototype.super = parent.prototype;
+	    return child.prototype;
+	};
+
+	// shim layer with setTimeout fallback
+	window.requestAnimFrame = (function(){
+	  	return  window.requestAnimationFrame       ||
+	          	window.webkitRequestAnimationFrame ||
+	          	window.mozRequestAnimationFrame    ||
+	          	function( callback ){
+		            window.setTimeout(callback, 1000 / 60);
+			};
+	})();
 
 })(window.herman);
 
-window.herman = window.herman || {};
+herman.createModule('Matrix',function(){
 
-(function(herman) {
-
-	// TODO chaining?
+	// TODO scaleX, scaleY or scaleNonUniform
 
 	var DEG_TO_RAD = Math.PI/180;
 
@@ -26,20 +71,17 @@ window.herman = window.herman || {};
 	 * | a31 a32 a33 |
 	 * 
 	 */
-	herman.Matrix = function() {
-		//TODO param
-		this.a11 = 1;
+	function Matrix() {
+		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
+		this.a11 = 1; 
 		this.a12 = 0;
 		this.a13 = 0;
 		this.a21 = 0;
 		this.a22 = 1;
 		this.a23 = 0;
-		this.a31 = 0; // remove?
-		this.a32 = 0; // remove?
-		this.a33 = 1; // remove?
 	}
 
-	herman.Matrix.prototype = {
+	Matrix.prototype = {
 		
 		/**
 		 * [translate description]
@@ -55,33 +97,20 @@ window.herman = window.herman || {};
 
 		/**
 		 * [rotate description]
-		 * @param  {Number} angle
+		 * @param  {Number} angle radians
 		 * @return {[type]}
 		 */
 		rotate : function(angle) {
-			angle = angle*DEG_TO_RAD; // or use radians?
-			var sin = Math.sin(angle).toFixed(ACCURACY);
-			var cos = Math.cos(angle).toFixed(ACCURACY);
-
+			angle = (angle*DEG_TO_RAD).toFixed(ACCURACY); // or use radians?
+			var sin = Math.sin(angle);
+			var cos = Math.cos(angle);
 			var a11 = this.a11;
-			// var a12 = this.a12; // remove?
-			// var a13 = this.a13;
 			var a21 = this.a21;
-			// var a22 = this.a22; // remove?
-			// var a23 = this.a23;
-			// var a31 = this.a31;
-			// var a32 = this.a32;
-			// var a33 = this.a33;
 
-			this.a11 = (cos*a11) + (sin*this.a12); //+ (0*a13);
-			this.a12 = (-sin*a11) + (cos*this.a12); // + (0*a13);
-			// this.a13 = (0*a11) + (0*a12) + (1*a13); 
-			this.a21 = (cos*a21) + (sin*this.a22);//  + (0*a23);
-			this.a22 = (-sin*a21) + (cos*this.a22);//  + (0*a23);
-			// this.a23 = (0*a21) + (0*a22) + (1*a23); 
-			// this.a31 = (cos*a31) + (sin*a32) + (0*a33);
-			// this.a32 = (-sin*a31) + (cos*a32) + (0*a33);
-			// this.a33 = (0*a31) + (0*a32) + (1*a33); 
+			this.a11 = (cos*a11) + (sin*this.a12); 
+			this.a12 = (-sin*a11) + (cos*this.a12); 
+			this.a21 = (cos*a21) + (sin*this.a22);
+			this.a22 = (-sin*a21) + (cos*this.a22); 
 			return this;
 		},
 
@@ -91,36 +120,10 @@ window.herman = window.herman || {};
 		 * @return {[type]}
 		 */
 		scale : function(scale) {
-			// var a11 = this.a11;
-			// var a12 = this.a12; 
-			// var a13 = this.a13;
-			// var a21 = this.a21;
-			// var a22 = this.a22;
-			// var a23 = this.a23;
-			// var a31 = this.a31;
-			// var a32 = this.a32;
-			// var a33 = this.a33;
-
-			this.a11 *= scale; // this.a11 = (scale*a11) + (0*a12)+ (0*a13);
-			this.a12 *= scale; // this.a12 = (0*a11) + (scale*a12) + (0*a13); 
-			// this.a13 = (0*a11) + (0*a12) + (1*a13);
-			this.a21 *= scale; // this.a21 = (scale*a21) + (0*a22) + (0*a23);
-			this.a22 *= scale; // this.a22 = (0*a21) + (scale*a22) + (0*a23);
-			// this.a23 = (0*a21) + (0*a22) + (1*a23);
-			// this.a31 = (scale*a31) + (0*a32) + (0*a33);
-			// this.a32 = (0*a31) + (scale*a32) + (0*a33);
-			// this.a33 = (0*a31) + (0*a32) + (1*a33);
-			return this;
-		},
-
-		/**
-		 * [scaleNonUniform description]
-		 * @param  {[type]} scaleX [description]
-		 * @param  {[type]} scaleY [description]
-		 * @return {[type]}        [description]
-		 */
-		scaleNonUniform : function(scaleX, scaleY) {
-			// TODO
+			this.a11 *= scale; 
+			this.a12 *= scale;  
+			this.a21 *= scale; 
+			this.a22 *= scale; 
 			return this;
 		},
 
@@ -133,7 +136,7 @@ window.herman = window.herman || {};
 		 * @return {[type]}       [description]
 		 */
 		transform : function(tx, ty, angle, scale) {
-			return this.translate(tx, ty).rotate(angle).scale(scale);
+			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
 		},
 
 		/**
@@ -152,25 +155,30 @@ window.herman = window.herman || {};
 		multiply : function(m) {
 			var a11 = this.a11;
 			var a12 = this.a12; 
-			var a13 = this.a13;
 			var a21 = this.a21;
 			var a22 = this.a22;
-			var a23 = this.a23;
-			var a31 = this.a31; // 0
-			var a32 = this.a32; // 0
-			var a33 = this.a33; // 1
 
-			this.a11 = (a11*m.a11) + (a12*m.a21) + (a13*m.a31);
-			this.a12 = (a11*m.a12) + (a12*m.a22) + (a13*m.a32); 
-			this.a13 = (a11*m.a13) + (a12*m.a23) + (a13*m.a33); 
+			this.a11 = (a11*m.a11) + (a12*m.a21);
+			this.a12 = (a11*m.a12) + (a12*m.a22); 
+			this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
 
-			this.a21 = (a21*m.a11) + (a22*m.a21) + (a23*m.a31);
-			this.a22 = (a21*m.a12) + (a22*m.a22) + (a23*m.a32);
-			this.a23 = (a21*m.a13) + (a22*m.a23) + (a23*m.a33);
+			this.a21 = (a21*m.a11) + (a22*m.a21);
+			this.a22 = (a21*m.a12) + (a22*m.a22);
+			this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+			return this;
+		},
 
-			this.a31 = (a31*m.a11) + (a32*m.a21) + (a33*m.a31);
-			this.a32 = (a31*m.a12) + (a32*m.a22) + (a33*m.a32);
-			this.a33 = (a31*m.a13) + (a32*m.a23) + (a33*m.a33);
+		/**
+		 * [identity description]
+		 * @return {[type]} [description]
+		 */
+		identity : function() {
+			this.a11 = 1; 
+			this.a12 = 0;
+			this.a13 = 0;
+			this.a21 = 0;
+			this.a22 = 1;
+			this.a23 = 0;
 			return this;
 		},
 
@@ -178,25 +186,27 @@ window.herman = window.herman || {};
 		 * [toString description]
 		 * @return {[type]}
 		 */
-		log : function() {
-			return 	this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
+		print : function() {
+			return 	'matrix' + '\n' +
+					this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
 					this.a21 + ' ' + this.a22 + ' ' + this.a23 + '\n' + 
-					this.a31 + ' ' + this.a32 + ' ' + this.a33 + '\n';
+					'[0]'	 + ' ' + '[0]'	  + ' ' + '[1]'	   + '\n';
 		}
 
 	};
 
-})(window.herman);
+	return Matrix;
 
-window.herman = window.herman || {};
+});
 
-(function(herman) {
+herman.createModule('Node',function(){
 
 	/**
 	 * [Node description]
 	 */
 	function Node() {
 		this.tag = null;
+		this.stage = null;
 		this.parent = null;
 		this.children = [];
 		// geom (private ?)
@@ -205,125 +215,127 @@ window.herman = window.herman || {};
 		this.y = 0;
 		this.scale = 1;
 		this.rotation = 0; 
+		this.visible = true;
 	}
 
-// expose
-	herman.Node = Node;
-
 // prototype
-	var _p = Node.prototype;
+	Node.prototype = {
 
-	// geom
-	
-	_p.getMatrix = function() {
-		this.matrix = new herman.Matrix().transform(this.x,this.y, this.rotation, this.scale);
-		if (this.parent) {
-			this.matrix = this.parent.getMatrix().multiply(this.matrix);	
-		} 
-		return this.matrix
-	},
-	
-	_p.position = function(x,y) {
-		this.x = x;
-		this.y = y;
-	};	
-
-	_p.rotate = function(angle) {
-		this.rotation = angle;
-	};	
-
-	_p.setScale = function(scale) {
-		this.scale = scale;
-	};	
-
-	// scene graph
+		// geom
 		
-	_p.addChild = function(child) {
-		this.addChildAt(child, this.children.length);
-	};
+		getMatrix : function() {	
+			//this.matrix.identity(); // clear		
+			this.matrix = new herman.Matrix().transform(this.x,this.y, this.rotation, this.scale); // avoid new matrix
+			
+			if (this.parent) {
+				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
+			} 
+			return this.matrix;
+		},
+		
+		position : function(x,y) {
+			this.x = x;
+			this.y = y;
+		},	
 
-	_p.addChildAt = function(child, index) {
-		if(index < 0 || index > this.children.length) {
-			console.log('index out of bounds');
-			return;
-		}
-		if(child instanceof Node && !this.hasChild(child)) {
-			if(child.parent) { 
-				child.parent.removeChild(child);
+		rotate : function(angle) {
+			this.rotation = angle;
+		},	
+
+		setScale : function(scale) {
+			this.scale = scale;
+		},	
+
+		// scene graph
+			
+		addChild : function(child) {
+			this.addChildAt(child, this.children.length);
+		},
+
+		addChildAt : function(child, index) {
+			if(index < 0 || index > this.children.length) {
+				console.log('index out of bounds');
+				return;
 			}
-			this.children.splice(index, 0, child);
-			child.parent = this;	
+			if(child instanceof Node && !this.hasChild(child)) {
+				if(child.parent) { 
+					child.parent.removeChild(child);
+				}
+				this.children.splice(index, 0, child);
+				child.parent = this;	
+			}
+		},
+
+		removeChild : function(child) {
+			if(child instanceof Node && this.hasChild(child)) {
+				this.removeChildAt(this.children.indexOf(child));
+			}
+		},
+
+		removeChildAt : function(index) {
+			if(index < 0 || index >= this.children.length) {
+				console.log('index out of bounds');
+				return;
+			}
+			this.children[index].parent = null;
+			this.children.splice(index, 1);
+		},
+
+		hasChild : function(child) {
+			return this.children.indexOf(child) !== -1;
+		},
+
+		getChildren : function() {
+			return this.children;
+		},
+
+		getChild : function(child) {
+			var index = this.children.indexOf(child);
+			return (index !== -1) ? this.children[index] : undefined;
+		},
+
+		getChildAt : function(index) {
+			if(index < 0 || index >= this.children.length) {
+				console.log('index out of bounds');
+				return;
+			}
+			return this.children[index];
 		}
+
 	};
 
-	_p.removeChild = function(child) {
-		if(child instanceof Node && this.hasChild(child)) {
-			this.removeChildAt(this.children.indexOf(child));
-		}
-	};
+// expose
+	return Node;
 
-	_p.removeChildAt = function(index) {
-		if(index < 0 || index >= this.children.length) {
-			console.log('index out of bounds');
-			return;
-		}
-		this.children[index].parent = null;
-		this.children.splice(index, 1);
-	};
+});
 
-	_p.hasChild = function(child) {
-		return this.children.indexOf(child) !== -1;
-	};
-
-	_p.getChildren = function() {
-		return this.children;
-	};
-
-	//TODO include children?
-	_p.getChild = function(child) {
-		var index = this.children.indexOf(child);
-		return (index !== -1) ? this.children[index] : undefined;
-	};
-
-	_p.getChildAt = function(index) {
-		if(index < 0 || index >= this.children.length) {
-			console.log('index out of bounds');
-			return;
-		}
-		return this.children[index];
-	};
-
-})(window.herman);
-
-window.herman = window.herman || {};
-
-(function(herman) {
+herman.createModule("herman.DomNode",function(){
 
 	/**
-	 * [Node description]
+	 * [DomNode description]
+	 * @param {[type]} element [description]
 	 */
 	function DomNode(element) {
 		herman.Node.call(this); // avoid
-		this.element = element || $('<div/>');
+		// this.element = element || $('<div/>');
+		if(!element) {
+			this.element = document.createElement("div");
+			this.element.className = "node";	
+		} else {
+			this.element = element;
+		}		
 	}
 
-// extend
-	herman.DomNode = DomNode;
-
-// super
-	var _s = herman.Node.prototype;
-
 // proto
-	var _p = DomNode.prototype = new herman.Node();
+	var _p = herman.inherits(DomNode, herman.Node);
 
 	_p.update = function() {
-		//TODO update children
 		var matrix = this.getMatrix();
-		
-		// update transform
-		this.element.css({
-			transform : 'matrix(' + matrix.a11 + ',' + matrix.a21 + ',' + matrix.a12 + ',' + matrix.a22 + ',' + matrix.a13 + ',' + matrix.a23 + ')'
-		});
+
+		// TODO cross browser
+		if(this.element.style) {
+			this.element.style.webkitTransform = 'matrix(' + matrix.a11 + ',' + matrix.a21 + ',' + matrix.a12 + ',' + matrix.a22 + ',' + matrix.a13 + ',' + matrix.a23 + ')';	
+		}
 		
 		// update children
 		this.children.forEach(function updateChildren(element){
@@ -331,50 +343,26 @@ window.herman = window.herman || {};
 		});
 	}
 
-	// geom	
-	_p.position = function(x,y) {
-		_s.position.apply(this,arguments); // super
-		if(this.parent) {
-			this.update(); 
-		}
-	};	
-
-	_p.rotate = function(angle) {
-		_s.rotate.apply(this,arguments); // super
-		if(this.parent) {
-			this.update(); 
-		}
-	};	
-
-	_p.setScale = function(scale) {
-		_s.setScale.apply(this,arguments); // super
-		if(this.parent) {
-			this.update(); 
-		}
-	};	
-
-	// scene
+// scene
 	_p.addChild = function(child) {
-		_s.addChild.apply(this,arguments); // super
+		
+		this.super.addChild.apply(this,arguments); // super
 		child.update();
-		$('.dom.stage').append(child.element);
-		//this.element.append(child.element);
+		//TODO use stage reference
+		document.getElementById('domStage').appendChild(child.element);
 	};
 
 	_p.removeChild = function(child) {
-		_s.addChild.apply(this,arguments); // super
-		child.element.remove();
+		this.super.addChild.apply(this,arguments); // super
+		//TODO remove
 	};
 
-})(window.herman);
+	return DomNode;
+
+});
 
 
-window.herman = window.herman || {};
-
-(function(herman) {
-
-	// aliases
-	var Node = herman.Node;
+herman.createModule("herman.CanvasNode",function(){
 
 	/**
 	 * [Node description]
@@ -384,14 +372,8 @@ window.herman = window.herman || {};
 		this.context = canvas.getContext("2d");
 	}
 
-// expose
-	herman.CanvasNode = CanvasNode;
-
-// super
-	var _s = Node.prototype;
-
 // proto
-	var _p = CanvasNode.prototype = new Node();
+	var _p = herman.inherits(CanvasNode, herman.Node);
 
 	//TODO custom draw method
 	_p.draw = function() {
@@ -440,5 +422,6 @@ window.herman = window.herman || {};
 		child.update();
 	};
 
+	return CanvasNode;
 
-})(window.herman);
+});

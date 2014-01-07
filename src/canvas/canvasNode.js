@@ -1,10 +1,5 @@
 
-window.herman = window.herman || {};
-
-(function(herman) {
-
-	// aliases
-	var Node = herman.Node;
+herman.createModule("herman.CanvasNode",function(){
 
 	/**
 	 * [Node description]
@@ -14,14 +9,8 @@ window.herman = window.herman || {};
 		this.context = canvas.getContext("2d");
 	}
 
-// expose
-	herman.CanvasNode = CanvasNode;
-
-// super
-	var _s = Node.prototype;
-
 // proto
-	var _p = CanvasNode.prototype = new Node();
+	var _p = herman.inherits(CanvasNode, herman.Node);
 
 	//TODO custom draw method
 	_p.draw = function() {
@@ -70,5 +59,6 @@ window.herman = window.herman || {};
 		child.update();
 	};
 
+	return CanvasNode;
 
-})(window.herman);
+});
