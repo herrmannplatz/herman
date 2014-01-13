@@ -9,13 +9,11 @@ herman.createModule('Node',function(){
 		this.stage = null;
 		this.parent = null;
 		this.children = [];
-		// geom (private ?)
 		this.matrix = new herman.Matrix(); // calculate on the fly
 		this.x = 0;
 		this.y = 0;
 		this.scale = 1;
 		this.rotation = 0; 
-		this.visible = true;
 	}
 
 // prototype

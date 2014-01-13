@@ -3,24 +3,32 @@ function init() {
 
 	// dom
 	(function(){
+
+		var nodes = [];
 		
 		var stage = new herman.DomNode(document.getElementById("domStage"));
 		stage.tag = "stage";
-		
-		var node = new herman.DomNode();
-		node.position(100,100);
-		node.tag = "node";
-		stage.addChild(node);
 
-		var child = new herman.DomNode();
-		child.position(10,10);
-		child.tag = "child";
-		node.addChild(child);
+		for( var i = 0; i < 100; i++ ) {
+			
+			var element = document.createElement("div");
+			element.innerHTML = "Hallo";
+			element.className = "node";
+			element.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+			
+			var node = new herman.DomNode(element);
+			node.position(Math.random()*300,Math.random()*300);
+			node.tag = "node" + i;
+			stage.addChild(node);	
+			nodes.push(node);
+		}	
 
 		var counter = 0;
 		function update(){
-			node.rotate(counter++%360);
-			node.update();
+			for( var i = 0; i < nodes.length; i++ ) {
+				nodes[i].rotate((counter++/100)%360);
+				nodes[i].update();
+			}			
 			requestAnimFrame(update);
 		}
 		requestAnimFrame(update);
