@@ -17,7 +17,7 @@ function init() {
 			element.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
 			
 			var node = new herman.DomNode(element);
-			node.position(Math.random()*300,Math.random()*300);
+			node.position(Math.random()*stage.element.offsetWidth,Math.random()*stage.element.offsetHeight);
 			node.tag = "node" + i;
 			stage.addChild(node);	
 			nodes.push(node);
