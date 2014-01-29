@@ -4,13 +4,20 @@ function init() {
 	// dom
 	(function(){
 
-		var nodes = [];
-		
+		// stats
+		var stats = new Stats();
+		stats.setMode(1); 
+		stats.domElement.style.position = 'absolute';
+		stats.domElement.style.left = '0px';
+		stats.domElement.style.top = '0px';
+		document.body.appendChild( stats.domElement );
+
+		// nodes		
 		var stage = new herman.DomNode(document.getElementById("domStage"));
 		stage.tag = "stage";
 
-		for( var i = 0; i < 100; i++ ) {
-			
+		var nodes = [];
+		for( var i = 0; i < 100; i++ ) {			
 			var element = document.createElement("div");
 			element.innerHTML = "Hallo";
 			element.className = "node";
@@ -23,19 +30,18 @@ function init() {
 			nodes.push(node);
 		}	
 
+		// spinning
 		var counter = 0;
 		function update(){
+			stats.begin();
 			for( var i = 0; i < nodes.length; i++ ) {
 				nodes[i].rotate((counter++/100)%360);
 				nodes[i].update();
 			}			
 			requestAnimFrame(update);
+			stats.end();
 		}
 		requestAnimFrame(update);
-
-		//setInterval(update,2000);
-
-		window.update = update;
 	})();
 
 	// canvas

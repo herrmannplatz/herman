@@ -1,5 +1,6 @@
 
 herman.createModule("herman.DomNode",function(){
+	//TODO composition
 
 	/**
 	 * [DomNode description]
@@ -10,7 +11,8 @@ herman.createModule("herman.DomNode",function(){
 		
 		if(!element) {
 			this.element = document.createElement("div");
-			this.element.className = "node";	
+			this.element.className = "node";
+	
 		} else {
 			this.element = element;
 		}		

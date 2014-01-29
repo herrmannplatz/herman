@@ -119,6 +119,8 @@ textarea {
     height: 100px;
     background-color: white;
     position: absolute;
+    -webkit-perspective: 1000;
+    -webkit-backface-visibility: hidden;
 }
 
 

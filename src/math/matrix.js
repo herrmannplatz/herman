@@ -5,7 +5,7 @@ herman.createModule('Matrix',function(){
 
 	var DEG_TO_RAD = Math.PI/180;
 
-	var ACCURACY = 15;
+	var PRECISION = 15;
 
 	/**
 	 * 3x3 Matrix
@@ -46,7 +46,7 @@ herman.createModule('Matrix',function(){
 		 * @return {[type]}
 		 */
 		rotate : function(angle) {
-			angle = (angle*DEG_TO_RAD).toFixed(ACCURACY); // or use radians?
+			angle = (angle*DEG_TO_RAD).toFixed(PRECISION); // or use radians?
 			var sin = Math.sin(angle);
 			var cos = Math.cos(angle);
 			var a11 = this.a11;
