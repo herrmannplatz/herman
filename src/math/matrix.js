@@ -5,7 +5,7 @@ herman.createModule('Matrix',function(){
 
 	var DEG_TO_RAD = Math.PI/180;
 
-	var PRECISION = 15;
+	var PRECISION = 5;
 
 	/**
 	 * 3x3 Matrix
@@ -35,8 +35,8 @@ herman.createModule('Matrix',function(){
 		 * @return {[type]}
 		 */
 		translate : function(tx, ty) {
-			this.a13 += tx;
-			this.a23 += ty;
+			this.a13 += tx; //Math.round(tx); // tx | 0;
+			this.a23 += ty; //Math.round(ty); // ty | 0;
 			return this;
 		},
 

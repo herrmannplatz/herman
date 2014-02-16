@@ -100,17 +100,20 @@ textarea {
 
 /* site */
 
+html, body {
+    height: 100%;
+}
+
 #container {
-    width: 800px;
-    height: 400px;
-    margin: 50px auto;
+    width: 100%; /*800px;*/
+    height: 100%; /*400px;*/
     overflow: hidden;
 }
 
 #domStage {
     width: 100%;
     height: 100%;
-    background-color: gray;
+    background-color: #c0c0c0;
     position: relative;
 }
 
@@ -118,9 +121,8 @@ textarea {
     width: 100px;
     height: 100px;
     background-color: white;
-    position: absolute;
-    -webkit-perspective: 1000;
-    -webkit-backface-visibility: hidden;
+    /*position: absolute;*/
+    overflow: hidden;
 }
 
 

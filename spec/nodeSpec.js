@@ -1,15 +1,15 @@
 describe('Node tests', function() {
 
     it('addChild', function() {
-    	// no child
+        // no child
         var n1 = new herman.Node();
         expect(n1.getChildren().length).toEqual(0);
 
         // add one child
-    	var n2 = new herman.Node();
-    	var c = new herman.Node();
-    	n2.addChild(c);
-    	expect(n2.hasChild(c)).toEqual(true);
+        var n2 = new herman.Node();
+        var c = new herman.Node();
+        n2.addChild(c);
+        expect(n2.hasChild(c)).toEqual(true);
         expect(n2.getChildren().length).toEqual(1);
         expect(c.parent).toEqual(n2);
 
@@ -26,11 +26,11 @@ describe('Node tests', function() {
         // add object to two different nodes
         var n6 = new herman.Node();
         var n7 = new herman.Node();
-    	var c1 = new herman.Node();
-    	n6.addChild(c1);
-    	n7.addChild(c1);
-    	expect(n6.hasChild(c1)).toEqual(false);
-    	expect(n7.hasChild(c1)).toEqual(true);
+        var c1 = new herman.Node();
+        n6.addChild(c1);
+        n7.addChild(c1);
+        expect(n6.hasChild(c1)).toEqual(false);
+        expect(n7.hasChild(c1)).toEqual(true);
         expect(n6.getChildren().length).toEqual(0);
         expect(n7.getChildren().length).toEqual(1);
         expect(c1.parent).toEqual(n7);
@@ -50,10 +50,10 @@ describe('Node tests', function() {
     it('removeChild', function() {
 
         // remove child
-    	var n = new herman.Node();
-    	var c = new herman.Node();
-    	n.addChild(c);
-    	expect(n.hasChild(c)).toEqual(true);
+        var n = new herman.Node();
+        var c = new herman.Node();
+        n.addChild(c);
+        expect(n.hasChild(c)).toEqual(true);
         expect(n.getChildren().length).toEqual(1);
         n.removeChild(c);
         expect(n.hasChild(c)).toEqual(false);

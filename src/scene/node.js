@@ -5,15 +5,21 @@ herman.createModule('Node',function(){
 	 * [Node description]
 	 */
 	function Node() {
-		this.tag = null;
-		this.stage = null;
-		this.parent = null;
+		this.tag = undefined;
+		this.stage = undefined;
+		this.parent = undefined;
 		this.children = [];
 		this.matrix = new herman.Matrix(); // calculate on the fly
 		this.x = 0;
 		this.y = 0;
 		this.scale = 1;
 		this.rotation = 0; 
+		// anchor 0-1 or px
+		this.anchorX = 0;
+		this.anchorY = 0;
+		// w/h
+		this.width = 0;
+		this.height = 0;
 	}
 
 // prototype
@@ -23,26 +29,13 @@ herman.createModule('Node',function(){
 		
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
-			this.matrix = new herman.Matrix().transform(this.x,this.y, this.rotation, this.scale); // avoid new matrix
-			
+			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+
 			if (this.parent) {
 				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
 			} 
 			return this.matrix;
 		},
-		
-		position : function(x,y) {
-			this.x = x;
-			this.y = y;
-		},	
-
-		rotate : function(angle) {
-			this.rotation = angle;
-		},	
-
-		setScale : function(scale) {
-			this.scale = scale;
-		},	
 
 		// scene graph
 			
