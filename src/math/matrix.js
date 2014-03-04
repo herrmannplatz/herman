@@ -113,6 +113,10 @@ herman.createModule('Matrix',function(){
 			return this;
 		},
 
+		invert : function() {
+			
+		},
+
 		/**
 		 * [identity description]
 		 * @return {[type]} [description]

@@ -1,13 +1,16 @@
 
-		// stats
-		window.stats = new Stats();
-		stats.setMode(1); 
-		stats.domElement.style.position = 'absolute';
-		stats.domElement.style.left = '0px';
-		stats.domElement.style.top = '0px';
-		document.body.appendChild( stats.domElement );
-
 function init() {
+
+	var stats;
+    function showStats() {
+        // stats
+        window.stats = new Stats();
+        stats.setMode(1); 
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+        document.body.appendChild( stats.domElement );    
+    }  
 
 	// dom
 	// (function(){
@@ -49,33 +52,33 @@ function init() {
 	// 		nodes.push(node);
 	// 	}	
 
-	// 	// spinning
-	// 	var counter = 0;
-	// 	function update(){
-	// 		if(!window.run) return;
-	// 		stats.begin();
-	// 		for( var i = 0; i < nodes.length; i++ ) {
-	// 			nodes[i].rotation = (counter++/100)%360;
-	// 		}
-	// 		stage.update();			
-	// 		requestAnimFrame(update);
-	// 		stats.end();
-	// 	}
-	// 	requestAnimFrame(update);
+		// // spinning
+		// var counter = 0;
+		// function update(){
+		// 	if(!window.run) return;
+		// 	stats.begin();
+		// 	for( var i = 0; i < nodes.length; i++ ) {
+		// 		nodes[i].rotation = (counter++/100)%360;
+		// 	}
+		// 	stage.update();			
+		// 	requestAnimFrame(update);
+		// 	stats.end();
+		// }
+		// requestAnimFrame(update);
 	// })();
+	// 
 
 	// canvas
 	(function(){
 
 		var canvas = document.getElementById('canvas');
-		var context = canvas.getContext("2d");
-
+		var renderer = new herman.Renderer(canvas);
+		var stage = new herman.canvas.Node();
+		var nodes = [];
+		
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		window.stage = new herman.canvas.Node();
-
-		var nodes = [];
 		for( var i = 0; i < 150; i++ ) {				
 			
 			var node = new herman.canvas.Node();
@@ -90,17 +93,12 @@ function init() {
 
 		// spinning
 		var counter = 0;
-		function update() {
-			stats.begin();
+		function update(){
 			for( var i = 0; i < nodes.length; i++ ) {
 				nodes[i].rotation = (counter++/100)%360;
 			}
-			// clear canvas 
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			// update stage
-			stage.update(context);			
+			renderer.update(stage);		
 			requestAnimFrame(update);
-			stats.end();
 		}
 		requestAnimFrame(update);
 

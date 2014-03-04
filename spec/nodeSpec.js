@@ -72,7 +72,47 @@ describe('Node tests', function() {
         expect(n2.getChildren().length).toEqual(1);
         expect(c.parent).toEqual(n2);
 
+    });
+
+    it('localToGlobal', function() {
+        var n1 = new herman.Node();
+        var n2 = new herman.Node();
+        var c = new herman.Node();
+
+        n1.addChild(n2);
+        n2.addChild(c);
+
+        n2.x = 100;
+        n2.y = 100;
+
+        c.x = -50;
+        c.y = -50;
+
+        var p = c.localToGlobal(0,0);
+        expect(p.x).toEqual(50);
+        expect(p.y).toEqual(50);
 
     });
+
+    it('localToGlobal', function() {
+        var n1 = new herman.Node();
+        var n2 = new herman.Node();
+        var c = new herman.Node();
+
+        n1.addChild(n2);
+        n2.addChild(c);
+
+        n2.x = 100;
+        n2.y = 100;
+
+        c.x = -50;
+        c.y = -50;
+
+        var p = c.globalToLocal(200,200);
+        expect(p.x).toEqual(150);
+        expect(p.y).toEqual(150);
+
+    });
+
     
 });

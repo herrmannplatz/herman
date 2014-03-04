@@ -3,31 +3,74 @@ herman.createModule('Tween',function(){
     "use strict"
 
     /**
-     * [Tween description]
-     * @param {[type]} target   [description]
-     * @param {[type]} property [description]
-     * @param {[type]} begin    [description]
-     * @param {[type]} end      [description]
-     * @param {[type]} duration [description]
+     * 
      */
-    function Tween(target, property, begin, end, duration) {
-        var startTime = new Date().getTime(),
-            diff, progress, value;
+    function Tween(target, properties, duration) {
 
-        (function update() {
-            stats.begin();
-            diff = new Date().getTime() - startTime;
-            progress = diff/duration;
-            progress = progress < 1 ? progress : 1;
-            value = begin + ( ( end - begin ) * progress );
-            target[property] = value;
-            target.update();
+            // tween object
+        var tween = {},
 
-            if (progress < 1) {
-                requestAnimationFrame(update);    
-            }
-            stats.end();
-        })();
+            // start time
+            start = new Date().getTime(),   
+
+            // delta start current time
+            delta,  
+
+            // normalized delta
+            progress,
+
+            // storage for start values       
+            begin = {},
+            
+            // requestAnimationFrame ID
+            requestID,
+
+            // done callback
+            done = function() {};
+
+        // store start values
+        Object.keys(properties).forEach(function(property){
+            begin[property] = target[property];
+        });
+
+        tween.start = function() {
+            (function update() {
+
+                delta = new Date().getTime() - start;
+
+                progress = Math.min(delta/duration, 1);
+
+                // TODO easing
+                Object.keys(properties).forEach(function(property) {
+                    target[property] = begin[property] + (( properties[property] - begin[property]) * progress );
+                });          
+
+                window.renderer.update(window.stage);                
+
+                if (progress < 1) {
+                    requestID = window.requestAnimationFrame(update); 
+                } else {
+                    done && done();
+                    window.cancelAnimationFrame(requestID);      
+                }
+
+            })();
+        };
+
+        tween.stop = function() {
+            window.cancelAnimationFrame(requestID);
+        };
+
+        tween.clone = function() {
+            return new Tween(target, property, duration);
+        };
+
+        tween.done = function(callback) {
+            done = callback;
+            return this;
+        };
+
+        return tween;
     }
 
     return Tween;

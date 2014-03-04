@@ -13,6 +13,10 @@ herman.createModule('Vector',function(){
 
     Vector.prototype = {
         
+        add: function() {
+
+        }
+        
     };
 
     return Vector;

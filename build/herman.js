@@ -51,6 +51,51 @@ window.herman = window.herman || {};
 
 })(window.herman);
 
+herman.createModule('Renderer',function(){
+    "use strict"  
+
+    /**
+     * [Renderer description]
+     * @param {[type]} canvas [description]
+     */
+    function Renderer(canvas) {
+        this.canvas = canvas;
+        this.context = this.canvas.getContext("2d");  
+    }
+
+    Renderer.prototype = {
+        
+        /**
+         * [update description]
+         * @param  {[type]} node [description]
+         * @return {[type]}      [description]
+         */
+        update: function(node) {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            node.update(this.context);
+        }
+        
+    };
+
+    return Renderer;
+
+});
+
+herman.createModule('Math',function(){
+    "use strict"
+
+    var Math = {};
+
+    /**
+     * [DEG_TO_RAD description]
+     * @type {[type]}
+     */
+    Math.DEG_TO_RAD = Math.PI/180;
+
+    return Math;
+
+});
+
 herman.createModule('Matrix',function(){
 
 	// TODO scaleX, scaleY or scaleNonUniform
@@ -165,6 +210,10 @@ herman.createModule('Matrix',function(){
 			return this;
 		},
 
+		invert : function() {
+			
+		},
+
 		/**
 		 * [identity description]
 		 * @return {[type]} [description]
@@ -210,6 +259,10 @@ herman.createModule('Vector',function(){
 
     Vector.prototype = {
         
+        add: function() {
+
+        }
+        
     };
 
     return Vector;
@@ -220,31 +273,74 @@ herman.createModule('Tween',function(){
     "use strict"
 
     /**
-     * [Tween description]
-     * @param {[type]} target   [description]
-     * @param {[type]} property [description]
-     * @param {[type]} begin    [description]
-     * @param {[type]} end      [description]
-     * @param {[type]} duration [description]
+     * 
      */
-    function Tween(target, property, begin, end, duration) {
-        var startTime = new Date().getTime(),
-            diff, progress, value;
+    function Tween(target, properties, duration) {
 
-        (function update() {
-            stats.begin();
-            diff = new Date().getTime() - startTime;
-            progress = diff/duration;
-            progress = progress < 1 ? progress : 1;
-            value = begin + ( ( end - begin ) * progress );
-            target[property] = value;
-            target.update();
+            // tween object
+        var tween = {},
 
-            if (progress < 1) {
-                requestAnimationFrame(update);    
-            }
-            stats.end();
-        })();
+            // start time
+            start = new Date().getTime(),   
+
+            // delta start current time
+            delta,  
+
+            // normalized delta
+            progress,
+
+            // storage for start values       
+            begin = {},
+            
+            // requestAnimationFrame ID
+            requestID,
+
+            // done callback
+            done = function() {};
+
+        // store start values
+        Object.keys(properties).forEach(function(property){
+            begin[property] = target[property];
+        });
+
+        tween.start = function() {
+            (function update() {
+
+                delta = new Date().getTime() - start;
+
+                progress = Math.min(delta/duration, 1);
+
+                // TODO easing
+                Object.keys(properties).forEach(function(property) {
+                    target[property] = begin[property] + (( properties[property] - begin[property]) * progress );
+                });          
+
+                window.renderer.update(window.stage);                
+
+                if (progress < 1) {
+                    requestID = window.requestAnimationFrame(update); 
+                } else {
+                    done && done();
+                    window.cancelAnimationFrame(requestID);      
+                }
+
+            })();
+        };
+
+        tween.stop = function() {
+            window.cancelAnimationFrame(requestID);
+        };
+
+        tween.clone = function() {
+            return new Tween(target, property, duration);
+        };
+
+        tween.done = function(callback) {
+            done = callback;
+            return this;
+        };
+
+        return tween;
     }
 
     return Tween;
@@ -277,7 +373,7 @@ herman.createModule('Node',function(){
 // prototype
 	Node.prototype = {
 
-		// geom
+	// transform
 		
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
@@ -289,7 +385,20 @@ herman.createModule('Node',function(){
 			return this.matrix;
 		},
 
-		// scene graph
+		localToGlobal : function(x, y) {
+			var mat = this.getMatrix();
+			mat.translate(x, y);
+			return new herman.Vector(mat.a13, mat.a23);
+
+		},
+
+		globalToLocal : function(x, y) {
+			// get mat, invert mat, append x,y
+			var mat = this.getMatrix();
+			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
+		},
+
+	// scene graph
 			
 		addChild : function(child) {
 			this.addChildAt(child, this.children.length);

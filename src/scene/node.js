@@ -25,7 +25,7 @@ herman.createModule('Node',function(){
 // prototype
 	Node.prototype = {
 
-		// geom
+	// transform
 		
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
@@ -37,7 +37,20 @@ herman.createModule('Node',function(){
 			return this.matrix;
 		},
 
-		// scene graph
+		localToGlobal : function(x, y) {
+			var mat = this.getMatrix();
+			mat.translate(x, y);
+			return new herman.Vector(mat.a13, mat.a23);
+
+		},
+
+		globalToLocal : function(x, y) {
+			// get mat, invert mat, append x,y
+			var mat = this.getMatrix();
+			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
+		},
+
+	// scene graph
 			
 		addChild : function(child) {
 			this.addChildAt(child, this.children.length);
