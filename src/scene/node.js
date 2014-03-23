@@ -1,8 +1,12 @@
 
-herman.createModule('Node',function(){
+herman.namespace('Node',function(){
+	"use strict"
 
 	/**
-	 * [Node description]
+	 * Node
+	 * 
+	 * @class Node
+	 * @constructor
 	 */
 	function Node() {
 		this.tag = undefined;
@@ -25,8 +29,19 @@ herman.createModule('Node',function(){
 // prototype
 	Node.prototype = {
 
+		update : function(context) {        
+	        // update children
+	        this.children.forEach(function(element){
+	            element.update(context);
+	        });
+	    },
+
 	// transform
 		
+		/**
+		 * get world matrix
+		 * @return {herman.Matrix} 
+		 */
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
 			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix

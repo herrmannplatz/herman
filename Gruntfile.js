@@ -7,10 +7,21 @@ module.exports = function(grunt) {
 
     concat: {
        dist: {
-        // the files to concatenate
-        src: ['src/herman.js','src/render/*.js','src/math/*.js','src/tween/*.js','src/scene/*.js','src/dom/*.js','src/canvas/*.js'],
-        // the location of the resulting JS file
+        src: ['src/herman.js','src/render/*.js','src/math/*.js','src/tween/*.js','src/scene/*.js'],
         dest: 'build/<%= pkg.name %>.js'
+      }
+    },
+
+    yuidoc: {
+      compile: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: 'build',
+          outdir: 'docs'
+        }
       }
     },
     
@@ -26,7 +37,7 @@ module.exports = function(grunt) {
     
     jasmine: {
       pivotal: {
-        src: 'build/<%= pkg.name %>.min.js',
+        src: 'build/<%= pkg.name %>.js',
         options: {
           specs: 'spec/*Spec.js',
           helpers: 'spec/*Helper.js'
@@ -37,11 +48,12 @@ module.exports = function(grunt) {
   });
 
   // tasks
+  grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   // Default task(s).
-  grunt.registerTask('default', ['concat','uglify','jasmine']);
+  grunt.registerTask('default', ['concat','yuidoc','uglify','jasmine']);
 
 };

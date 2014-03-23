@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>build/herman.js - herman</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="herman"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Node.html">Node</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: build/herman.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+
+window.herman = window.herman || {};
+
+(function(herman) {
+
+    herman.VERSION = 0.1;
+
+    /**
+     * create namespace
+     * @param  {string} namespace 
+     */
+    herman.namespace = function(namespace, func) {
+        var ns = namespace.split(&#x27;.&#x27;); // &#x27;canvas.Node&#x27;
+        var module = ns.pop(); // &#x27;Node&#x27;
+        var o = herman; 
+
+        if(ns[0] === &#x27;herman&#x27;) {
+            ns.shift();
+        }
+
+        for(var i = 0; i &lt; ns.length; i++){
+            o = o[ns[i]] = o[ns[i]] || {};
+        } 
+        o[module] = func.call(this);
+    };
+
+    /**
+     * prototypical inheritance helper
+     * @param  {Object} child  
+     * @param  {Object} parent
+     * @return {Object}        
+     */
+    herman.inherits = function inherits(child, parent) {
+        var o = Object.create(parent.prototype);
+        o.constructor = child;
+        child.prototype = o;
+        child.prototype.super = parent.prototype;
+        return child.prototype;
+    };
+
+    // shim layer with setTimeout fallback
+    window.requestAnimFrame = (function(){
+        return  window.requestAnimationFrame       ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame    ||
+                function( callback ){
+                    window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+
+})(window.herman);
+
+herman.namespace(&#x27;Renderer&#x27;,function(){
+    &quot;use strict&quot;  
+
+    /**
+     * 
+     * @param {HTMLCanvasElement} canvas 
+     */
+    function Renderer(canvas) {
+        this.canvas = canvas;
+        this.context = this.canvas.getContext(&quot;2d&quot;);  
+        this.buffer = document.createElement(&#x27;canvas&#x27;);
+        this.buffer.width = this.canvas.width;
+        this.buffer.height = this.canvas.height;
+        this.bufferContext = this.buffer.getContext(&quot;2d&quot;);  
+    }
+
+    Renderer.prototype = {
+        
+        /**
+         * trigger node update
+         */
+        update: function(node) {
+            // clear
+            this.canvas.width = this.canvas.width;
+            this.buffer.width = this.buffer.width;
+            // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // this.bufferContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            
+            // draw into buffer
+            node.update(this.bufferContext);
+
+            // draw buffer data on screen
+            this.context.drawImage(this.buffer, 0, 0);
+        }
+        
+    };
+
+    return Renderer;
+
+});
+
+herman.namespace(&#x27;Math&#x27;,function(){
+    &quot;use strict&quot;
+
+    return {
+
+        /**
+         * Degrees to radians helper
+         */
+        DEG_TO_RAD : Math.PI/180
+    };
+
+});
+
+herman.namespace(&#x27;Matrix&#x27;,function(){
+
+	// TODO scaleX, scaleY or scaleNonUniform
+
+	var PRECISION = 5;
+
+	/**
+	 * 3x3 Matrix
+	 * @constructor
+	 */
+	function Matrix() {
+		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
+		this.a11 = 1; 
+		this.a12 = 0;
+		this.a13 = 0;
+		this.a21 = 0;
+		this.a22 = 1;
+		this.a23 = 0;
+	}
+
+	Matrix.prototype = {
+		
+		/**
+		 * [translate description]
+		 * @param  {Number} tx
+		 * @param  {Number} ty
+		 * @return {Matrix}
+		 */
+		translate : function(tx, ty) {
+			this.a13 += tx | 0;
+			this.a23 += ty | 0;
+			return this;
+		},
+
+		/**
+		 * [rotate description]
+		 * @param  {Number} angle radians
+		 * @return {Matrix}
+		 */
+		rotate : function(angle) {
+			angle = (angle*herman.Math.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
+			var sin = Math.sin(angle);
+			var cos = Math.cos(angle);
+			var a11 = this.a11;
+			var a21 = this.a21;
+
+			this.a11 = (cos*a11) + (sin*this.a12); 
+			this.a12 = (-sin*a11) + (cos*this.a12); 
+			this.a21 = (cos*a21) + (sin*this.a22);
+			this.a22 = (-sin*a21) + (cos*this.a22); 
+			return this;
+		},
+
+		/**
+		 * [scale description]
+		 * @param  {Number} scale
+		 * @return {Matrix}
+		 */
+		scale : function(scale) {
+			this.a11 *= scale; 
+			this.a12 *= scale;  
+			this.a21 *= scale; 
+			this.a22 *= scale; 
+			return this;
+		},
+
+		/**
+		 * [transform description]
+		 */
+		transform : function(tx, ty, angle, scale) {
+			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+		},
+
+		/**
+		 * [multiply description]
+		 * @param  {Matrix} m
+		 * @return {Matrix}
+		 *
+		 * @example
+		 * 
+		 *					| m.a11 m.a12 m.a13 |
+		 *     				| m.a21 m.a22 m.a23 |
+		 *         			| m.a31 m.a32 m.a33 |
+		 * | a11 a12 a13 |
+		 * | a21 a22 a23 |
+		 * | a31 a32 a33 |
+		 * 
+		 */
+		multiply : function(m) {
+			var a11 = this.a11;
+			var a12 = this.a12; 
+			var a21 = this.a21;
+			var a22 = this.a22;
+
+			this.a11 = (a11*m.a11) + (a12*m.a21);
+			this.a12 = (a11*m.a12) + (a12*m.a22); 
+			this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
+
+			this.a21 = (a21*m.a11) + (a22*m.a21);
+			this.a22 = (a21*m.a12) + (a22*m.a22);
+			this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+			return this;
+		},
+
+		invert : function() {
+			
+		},
+
+		/**
+		 * [identity description]
+		 * @return {Matrix} [description]
+		 */
+		identity : function() {
+			this.a11 = 1; 
+			this.a12 = 0;
+			this.a13 = 0;
+			this.a21 = 0;
+			this.a22 = 1;
+			this.a23 = 0;
+			return this;
+		},
+
+		/**
+		 * [toString description]
+		 * @return {String}
+		 */
+		print : function() {
+			return 	&#x27;matrix&#x27; + &#x27;\n&#x27; +
+					this.a11 + &#x27; &#x27; + this.a12 + &#x27; &#x27; + this.a13 + &#x27;\n&#x27; +  
+					this.a21 + &#x27; &#x27; + this.a22 + &#x27; &#x27; + this.a23 + &#x27;\n&#x27; + 
+					&#x27;[0]&#x27;	 + &#x27; &#x27; + &#x27;[0]&#x27;	  + &#x27; &#x27; + &#x27;[1]&#x27;	   + &#x27;\n&#x27;;
+		}
+
+	};
+
+	return Matrix;
+
+});
+
+herman.namespace(&#x27;Vector&#x27;,function(){
+    &quot;use strict&quot;
+
+    /**
+     * Vector
+     * @constructor
+     */
+    function Vector(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    Vector.prototype = {
+        
+        add: function(x,y ) {
+            this.x += x;
+            this.y += y;
+        }
+        
+    };
+
+    return Vector;
+
+});
+
+herman.namespace(&#x27;Tween&#x27;,function(){
+    &quot;use strict&quot;
+
+    /**
+     * flash like tweening object
+     *
+     * @example
+     * var tween = new Tween(node, { x : 100 }, 1000);
+     * tween.done = function() { console.log(&#x27;tweening finished&#x27;) }
+     * tween.start();
+     * 
+     * @param {herman.Node} target     [description]
+     * @param {Object} properties [description]
+     * @param {Number} duration   [description]
+     */
+    function Tween(target, properties, duration) {
+
+            // tween object
+        var tween = {},
+
+            // start time
+            start = new Date().getTime(),   
+
+            // delta start current time
+            delta,  
+
+            // normalized delta
+            progress,
+
+            // storage for start values       
+            begin = {},
+            
+            // requestAnimationFrame ID
+            requestID,
+
+            // done callback
+            done = function() {};
+
+        // store start values
+        Object.keys(properties).forEach(function(property){
+            begin[property] = target[property];
+        });
+
+        tween.start = function() {
+            (function update() {
+
+                delta = new Date().getTime() - start;
+
+                progress = Math.min(delta/duration, 1);
+
+                // TODO easing
+                Object.keys(properties).forEach(function(property) {
+                    target[property] = begin[property] + (( properties[property] - begin[property]) * progress );
+                });          
+
+                window.renderer.update(window.stage);                
+
+                if (progress &lt; 1) {
+                    requestID = window.requestAnimationFrame(update); 
+                } else {
+                    done &amp;&amp; done();
+                    window.cancelAnimationFrame(requestID);      
+                }
+
+            })();
+        };
+
+        tween.stop = function() {
+            window.cancelAnimationFrame(requestID);
+        };
+
+        tween.clone = function() {
+            return new Tween(target, property, duration);
+        };
+
+        tween.done = function(callback) {
+            done = callback;
+            return this;
+        };
+
+        return tween;
+    }
+
+    return Tween;
+
+});
+
+// herman.namespace(&quot;DomNode&quot;,function(){
+
+// 	/**
+// 	 * Dom Node
+// 	 * @param {HTMLDivElement} element
+// 	 */
+// 	function DomNode(element) {
+// 		herman.Node.call(this); 
+		
+// 		if(!element) {
+// 			// dev style
+// 			this.element = document.createElement(&quot;div&quot;);
+// 			this.element.className = &quot;div-node&quot;;
+// 			this.element.style.width = &#x27;100px&#x27;;
+// 			this.element.style.height = &#x27;100px&#x27;;
+// 			this.element.style.backgroundColor = &#x27;white&#x27;;
+// 			this.element.style.border = &#x27;1px solid red&#x27;;
+	
+// 		} else {
+// 			this.element = element;
+// 		}	
+
+// 		// force gpu rendering
+// 		this.element.style.webkitPerspective = 1000;
+// 		this.element.style.webkitBackfaceVisibility = &quot;hidden&quot;;
+// 		// node styles
+// 		this.element.style.position = &quot;absolute&quot;;
+// 	}
+
+// // proto
+// 	var _p = herman.inherits(DomNode, herman.Node);
+
+// 	_p.update = function() {
+// 		var matrix = this.getMatrix();
+
+// 		// TODO cross browser
+// 		this.element.style.webkitTransform = &#x27;matrix(&#x27; + matrix.a11 + &#x27;,&#x27; + matrix.a21 + &#x27;,&#x27; + matrix.a12 + &#x27;,&#x27; + matrix.a22 + &#x27;,&#x27; + matrix.a13 + &#x27;,&#x27; + matrix.a23 + &#x27;)&#x27;;	
+		
+// 		// update children
+// 		for (var i = 0; i &lt; this.children.length; i++) {
+// 			this.children[i].update();
+// 		}
+// 	}
+
+// // scene
+// 	_p.addChild = function(child) {
+		
+// 		this.super.addChild.apply(this,arguments); // super
+// 		child.update();
+// 		//TODO use stage reference
+// 		document.getElementById(&#x27;domStage&#x27;).appendChild(child.element);
+// 	};
+
+// 	_p.removeChild = function(child) {
+// 		this.super.removeChild.apply(this,arguments); // super
+// 		//TODO use stage reference
+// 		document.getElementById(&#x27;domStage&#x27;).removeChild(child.element);
+// 	};
+
+// 	return DomNode;
+
+// });
+
+
+herman.namespace(&#x27;Node&#x27;,function(){
+	&quot;use strict&quot;
+
+	/**
+	 * Node
+	 * 
+	 * @class Node
+	 * @constructor
+	 */
+	function Node() {
+		this.tag = undefined;
+		this.stage = undefined;
+		this.parent = undefined;
+		this.children = [];
+		this.matrix = new herman.Matrix(); // calculate on the fly
+		this.x = 0;
+		this.y = 0;
+		this.scale = 1;
+		this.rotation = 0; 
+		// anchor 0-1 or px
+		this.anchorX = 0;
+		this.anchorY = 0;
+		// w/h
+		this.width = 0;
+		this.height = 0;
+	}
+
+// prototype
+	Node.prototype = {
+
+		update : function(context) {        
+	        // update children
+	        this.children.forEach(function(element){
+	            element.update(context);
+	        });
+	    },
+
+	// transform
+		
+		/**
+		 * get world matrix
+		 * @return {herman.Matrix} 
+		 */
+		getMatrix : function() {	
+			//this.matrix.identity(); // clear		
+			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+
+			if (this.parent) {
+				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
+			} 
+			return this.matrix;
+		},
+
+		localToGlobal : function(x, y) {
+			var mat = this.getMatrix();
+			mat.translate(x, y);
+			return new herman.Vector(mat.a13, mat.a23);
+
+		},
+
+		globalToLocal : function(x, y) {
+			// get mat, invert mat, append x,y
+			var mat = this.getMatrix();
+			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -&gt; 10, 10
+		},
+
+	// scene graph
+			
+		addChild : function(child) {
+			this.addChildAt(child, this.children.length);
+		},
+
+		addChildAt : function(child, index) {
+			if(index &lt; 0 || index &gt; this.children.length) {
+				console.log(&#x27;index out of bounds&#x27;);
+				return;
+			}
+			if(child instanceof Node &amp;&amp; !this.hasChild(child)) {
+				if(child.parent) { 
+					child.parent.removeChild(child);
+				}
+				this.children.splice(index, 0, child);
+				child.parent = this;	
+			}
+		},
+
+		removeChild : function(child) {
+			if(child instanceof Node &amp;&amp; this.hasChild(child)) {
+				this.removeChildAt(this.children.indexOf(child));
+			}
+		},
+
+		removeChildAt : function(index) {
+			if(index &lt; 0 || index &gt;= this.children.length) {
+				console.log(&#x27;index out of bounds&#x27;);
+				return;
+			}
+			this.children[index].parent = null;
+			this.children.splice(index, 1);
+		},
+
+		hasChild : function(child) {
+			return this.children.indexOf(child) !== -1;
+		},
+
+		getChildren : function() {
+			return this.children;
+		},
+
+		getChild : function(child) {
+			var index = this.children.indexOf(child);
+			return (index !== -1) ? this.children[index] : undefined;
+		},
+
+		getChildAt : function(index) {
+			if(index &lt; 0 || index &gt;= this.children.length) {
+				console.log(&#x27;index out of bounds&#x27;);
+				return;
+			}
+			return this.children[index];
+		}
+
+	};
+
+// expose
+	return Node;
+
+});
+
+herman.namespace(&quot;Sprite&quot;,function(){
+
+    /**
+     * Canvas Node
+     * @constructor
+     */
+    function Sprite(bitmap) {
+        herman.Node.call(this);
+        this.bitmap = bitmap;
+    }
+
+// proto
+    var _p = herman.inherits(Sprite, herman.Node);
+
+    //TODO custom draw method
+    _p.draw = function(context) {
+        var matrix = this.getMatrix();
+        context.save();
+        context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
+        context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
+        context.restore();
+    }
+
+    _p.update = function(context) {
+        this.draw(context);
+        
+        // update children
+        this.children.forEach(function(element){
+            element.update(context);
+        });
+    }
+
+    return Sprite;
+
+});
+
+
+herman.namespace(&quot;Text&quot;,function(){
+
+    /**
+     * Text Node
+     * @constructor
+     */
+    function Text(text) {
+        herman.Node.call(this);
+        this.text = text;
+    }
+
+// proto
+    var _p = herman.inherits(Text, herman.Node);
+
+    //TODO custom draw method
+    _p.draw = function(context) {
+        var matrix = this.getMatrix();
+        context.save();
+            context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
+            context.fillStyle = &quot;#00F&quot;;
+            context.font = &quot;italic 30pt Arial&quot;;
+            context.fillText(this.text, 20, 50);
+        context.restore();
+    };
+
+    _p.update = function(context) {
+        this.draw(context);
+    };
+
+    return Text;
+
+});
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

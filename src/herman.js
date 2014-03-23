@@ -6,11 +6,10 @@ window.herman = window.herman || {};
     herman.VERSION = 0.1;
 
     /**
-     * [namespace description]
-     * @param  {[type]} namespace [description]
-     * @return {[type]}           [description]
+     * create namespace
+     * @param  {string} namespace 
      */
-    herman.createModule = function(namespace, func) {
+    herman.namespace = function(namespace, func) {
         var ns = namespace.split('.'); // 'canvas.Node'
         var module = ns.pop(); // 'Node'
         var o = herman; 
@@ -26,10 +25,10 @@ window.herman = window.herman || {};
     };
 
     /**
-     * [inherits description]
-     * @param  {[type]} child  [description]
-     * @param  {[type]} parent [description]
-     * @return {[type]}        [description]
+     * prototypical inheritance helper
+     * @param  {Object} child  
+     * @param  {Object} parent
+     * @return {Object}        
      */
     herman.inherits = function inherits(child, parent) {
         var o = Object.create(parent.prototype);

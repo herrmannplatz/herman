@@ -1,20 +1,13 @@
 
-herman.createModule('Matrix',function(){
+herman.namespace('Matrix',function(){
 
 	// TODO scaleX, scaleY or scaleNonUniform
-
-	var DEG_TO_RAD = Math.PI/180;
 
 	var PRECISION = 5;
 
 	/**
 	 * 3x3 Matrix
 	 * @constructor
-	 *
-	 * | a11 a12 a13 |
-	 * | a21 a22 a23 |
-	 * | a31 a32 a33 |
-	 * 
 	 */
 	function Matrix() {
 		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
@@ -30,9 +23,9 @@ herman.createModule('Matrix',function(){
 		
 		/**
 		 * [translate description]
-		 * @param  {[type]} tx
-		 * @param  {[type]} ty
-		 * @return {[type]}
+		 * @param  {Number} tx
+		 * @param  {Number} ty
+		 * @return {Matrix}
 		 */
 		translate : function(tx, ty) {
 			this.a13 += tx; //Math.round(tx); // tx | 0;
@@ -43,10 +36,10 @@ herman.createModule('Matrix',function(){
 		/**
 		 * [rotate description]
 		 * @param  {Number} angle radians
-		 * @return {[type]}
+		 * @return {Matrix}
 		 */
 		rotate : function(angle) {
-			angle = (angle*DEG_TO_RAD).toFixed(PRECISION); // or use radians?
+			angle = (angle*herman.Math.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
 			var sin = Math.sin(angle);
 			var cos = Math.cos(angle);
 			var a11 = this.a11;
@@ -61,8 +54,8 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [scale description]
-		 * @param  {[type]} scale
-		 * @return {[type]}
+		 * @param  {Number} scale
+		 * @return {Matrix}
 		 */
 		scale : function(scale) {
 			this.a11 *= scale; 
@@ -74,11 +67,6 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [transform description]
-		 * @param  {[type]} tx    [description]
-		 * @param  {[type]} ty    [description]
-		 * @param  {[type]} angle [description]
-		 * @param  {[type]} scale [description]
-		 * @return {[type]}       [description]
 		 */
 		transform : function(tx, ty, angle, scale) {
 			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
@@ -86,9 +74,11 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [multiply description]
-		 * @param  {[type]} m
-		 * @return {[type]}
+		 * @param  {Matrix} m
+		 * @return {Matrix}
 		 *
+		 * @example
+		 * 
 		 *					| m.a11 m.a12 m.a13 |
 		 *     				| m.a21 m.a22 m.a23 |
 		 *         			| m.a31 m.a32 m.a33 |
@@ -119,7 +109,7 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [identity description]
-		 * @return {[type]} [description]
+		 * @return {Matrix} [description]
 		 */
 		identity : function() {
 			this.a11 = 1; 
@@ -133,7 +123,7 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [toString description]
-		 * @return {[type]}
+		 * @return {String}
 		 */
 		print : function() {
 			return 	'matrix' + '\n' +

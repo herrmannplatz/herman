@@ -1,15 +1,13 @@
 
-herman.createModule('Math',function(){
+herman.namespace('Math',function(){
     "use strict"
 
-    var Math = {};
+    return {
 
-    /**
-     * [DEG_TO_RAD description]
-     * @type {[type]}
-     */
-    Math.DEG_TO_RAD = Math.PI/180;
-
-    return Math;
+        /**
+         * Degrees to radians helper
+         */
+        DEG_TO_RAD : Math.PI/180
+    };
 
 });

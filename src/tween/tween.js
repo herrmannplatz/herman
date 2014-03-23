@@ -1,9 +1,18 @@
 
-herman.createModule('Tween',function(){
+herman.namespace('Tween',function(){
     "use strict"
 
     /**
+     * flash like tweening object
+     *
+     * @example
+     * var tween = new Tween(node, { x : 100 }, 1000);
+     * tween.done = function() { console.log('tweening finished') }
+     * tween.start();
      * 
+     * @param {herman.Node} target     [description]
+     * @param {Object} properties [description]
+     * @param {Number} duration   [description]
      */
     function Tween(target, properties, duration) {
 

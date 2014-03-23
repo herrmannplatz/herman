@@ -1,5 +1,5 @@
 
-herman.createModule('Vector',function(){
+herman.namespace('Vector',function(){
     "use strict"
 
     /**
@@ -13,8 +13,9 @@ herman.createModule('Vector',function(){
 
     Vector.prototype = {
         
-        add: function() {
-
+        add: function(x,y ) {
+            this.x += x;
+            this.y += y;
         }
         
     };

@@ -1,10 +1,10 @@
 
-herman.createModule('Renderer',function(){
+herman.namespace('Renderer',function(){
     "use strict"  
 
     /**
-     * [Renderer description]
-     * @param {[type]} canvas [description]
+     * 
+     * @param {HTMLCanvasElement} canvas 
      */
     function Renderer(canvas) {
         this.canvas = canvas;
@@ -14,12 +14,13 @@ herman.createModule('Renderer',function(){
     Renderer.prototype = {
         
         /**
-         * [update description]
-         * @param  {[type]} node [description]
-         * @return {[type]}      [description]
+         * trigger node update
          */
         update: function(node) {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // clear
+            this.canvas.width = this.canvas.width;
+            
+            // draw into buffer
             node.update(this.context);
         }
         

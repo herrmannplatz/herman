@@ -6,11 +6,10 @@ window.herman = window.herman || {};
     herman.VERSION = 0.1;
 
     /**
-     * [namespace description]
-     * @param  {[type]} namespace [description]
-     * @return {[type]}           [description]
+     * create namespace
+     * @param  {string} namespace 
      */
-    herman.createModule = function(namespace, func) {
+    herman.namespace = function(namespace, func) {
         var ns = namespace.split('.'); // 'canvas.Node'
         var module = ns.pop(); // 'Node'
         var o = herman; 
@@ -26,10 +25,10 @@ window.herman = window.herman || {};
     };
 
     /**
-     * [inherits description]
-     * @param  {[type]} child  [description]
-     * @param  {[type]} parent [description]
-     * @return {[type]}        [description]
+     * prototypical inheritance helper
+     * @param  {Object} child  
+     * @param  {Object} parent
+     * @return {Object}        
      */
     herman.inherits = function inherits(child, parent) {
         var o = Object.create(parent.prototype);
@@ -51,28 +50,39 @@ window.herman = window.herman || {};
 
 })(window.herman);
 
-herman.createModule('Renderer',function(){
+herman.namespace('Renderer',function(){
     "use strict"  
 
     /**
-     * [Renderer description]
-     * @param {[type]} canvas [description]
+     * 
+     * @param {HTMLCanvasElement} canvas 
      */
     function Renderer(canvas) {
         this.canvas = canvas;
         this.context = this.canvas.getContext("2d");  
+        this.buffer = document.createElement('canvas');
+        this.buffer.width = this.canvas.width;
+        this.buffer.height = this.canvas.height;
+        this.bufferContext = this.buffer.getContext("2d");  
     }
 
     Renderer.prototype = {
         
         /**
-         * [update description]
-         * @param  {[type]} node [description]
-         * @return {[type]}      [description]
+         * trigger node update
          */
         update: function(node) {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            node.update(this.context);
+            // clear
+            this.canvas.width = this.canvas.width;
+            this.buffer.width = this.buffer.width;
+            // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // this.bufferContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            
+            // draw into buffer
+            node.update(this.bufferContext);
+
+            // draw buffer data on screen
+            this.context.drawImage(this.buffer, 0, 0);
         }
         
     };
@@ -81,37 +91,28 @@ herman.createModule('Renderer',function(){
 
 });
 
-herman.createModule('Math',function(){
+herman.namespace('Math',function(){
     "use strict"
 
-    var Math = {};
+    return {
 
-    /**
-     * [DEG_TO_RAD description]
-     * @type {[type]}
-     */
-    Math.DEG_TO_RAD = Math.PI/180;
-
-    return Math;
+        /**
+         * Degrees to radians helper
+         */
+        DEG_TO_RAD : Math.PI/180
+    };
 
 });
 
-herman.createModule('Matrix',function(){
+herman.namespace('Matrix',function(){
 
 	// TODO scaleX, scaleY or scaleNonUniform
-
-	var DEG_TO_RAD = Math.PI/180;
 
 	var PRECISION = 5;
 
 	/**
 	 * 3x3 Matrix
 	 * @constructor
-	 *
-	 * | a11 a12 a13 |
-	 * | a21 a22 a23 |
-	 * | a31 a32 a33 |
-	 * 
 	 */
 	function Matrix() {
 		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
@@ -127,23 +128,23 @@ herman.createModule('Matrix',function(){
 		
 		/**
 		 * [translate description]
-		 * @param  {[type]} tx
-		 * @param  {[type]} ty
-		 * @return {[type]}
+		 * @param  {Number} tx
+		 * @param  {Number} ty
+		 * @return {Matrix}
 		 */
 		translate : function(tx, ty) {
-			this.a13 += tx; //Math.round(tx); // tx | 0;
-			this.a23 += ty; //Math.round(ty); // ty | 0;
+			this.a13 += tx | 0;
+			this.a23 += ty | 0;
 			return this;
 		},
 
 		/**
 		 * [rotate description]
 		 * @param  {Number} angle radians
-		 * @return {[type]}
+		 * @return {Matrix}
 		 */
 		rotate : function(angle) {
-			angle = (angle*DEG_TO_RAD).toFixed(PRECISION); // or use radians?
+			angle = (angle*herman.Math.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
 			var sin = Math.sin(angle);
 			var cos = Math.cos(angle);
 			var a11 = this.a11;
@@ -158,8 +159,8 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [scale description]
-		 * @param  {[type]} scale
-		 * @return {[type]}
+		 * @param  {Number} scale
+		 * @return {Matrix}
 		 */
 		scale : function(scale) {
 			this.a11 *= scale; 
@@ -171,11 +172,6 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [transform description]
-		 * @param  {[type]} tx    [description]
-		 * @param  {[type]} ty    [description]
-		 * @param  {[type]} angle [description]
-		 * @param  {[type]} scale [description]
-		 * @return {[type]}       [description]
 		 */
 		transform : function(tx, ty, angle, scale) {
 			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
@@ -183,9 +179,11 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [multiply description]
-		 * @param  {[type]} m
-		 * @return {[type]}
+		 * @param  {Matrix} m
+		 * @return {Matrix}
 		 *
+		 * @example
+		 * 
 		 *					| m.a11 m.a12 m.a13 |
 		 *     				| m.a21 m.a22 m.a23 |
 		 *         			| m.a31 m.a32 m.a33 |
@@ -216,7 +214,7 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [identity description]
-		 * @return {[type]} [description]
+		 * @return {Matrix} [description]
 		 */
 		identity : function() {
 			this.a11 = 1; 
@@ -230,7 +228,7 @@ herman.createModule('Matrix',function(){
 
 		/**
 		 * [toString description]
-		 * @return {[type]}
+		 * @return {String}
 		 */
 		print : function() {
 			return 	'matrix' + '\n' +
@@ -245,7 +243,7 @@ herman.createModule('Matrix',function(){
 
 });
 
-herman.createModule('Vector',function(){
+herman.namespace('Vector',function(){
     "use strict"
 
     /**
@@ -259,8 +257,9 @@ herman.createModule('Vector',function(){
 
     Vector.prototype = {
         
-        add: function() {
-
+        add: function(x,y ) {
+            this.x += x;
+            this.y += y;
         }
         
     };
@@ -269,11 +268,20 @@ herman.createModule('Vector',function(){
 
 });
 
-herman.createModule('Tween',function(){
+herman.namespace('Tween',function(){
     "use strict"
 
     /**
+     * flash like tweening object
+     *
+     * @example
+     * var tween = new Tween(node, { x : 100 }, 1000);
+     * tween.done = function() { console.log('tweening finished') }
+     * tween.start();
      * 
+     * @param {herman.Node} target     [description]
+     * @param {Object} properties [description]
+     * @param {Number} duration   [description]
      */
     function Tween(target, properties, duration) {
 
@@ -347,10 +355,78 @@ herman.createModule('Tween',function(){
 
 });
 
-herman.createModule('Node',function(){
+// herman.namespace("DomNode",function(){
+
+// 	/**
+// 	 * Dom Node
+// 	 * @param {HTMLDivElement} element
+// 	 */
+// 	function DomNode(element) {
+// 		herman.Node.call(this); 
+		
+// 		if(!element) {
+// 			// dev style
+// 			this.element = document.createElement("div");
+// 			this.element.className = "div-node";
+// 			this.element.style.width = '100px';
+// 			this.element.style.height = '100px';
+// 			this.element.style.backgroundColor = 'white';
+// 			this.element.style.border = '1px solid red';
+	
+// 		} else {
+// 			this.element = element;
+// 		}	
+
+// 		// force gpu rendering
+// 		this.element.style.webkitPerspective = 1000;
+// 		this.element.style.webkitBackfaceVisibility = "hidden";
+// 		// node styles
+// 		this.element.style.position = "absolute";
+// 	}
+
+// // proto
+// 	var _p = herman.inherits(DomNode, herman.Node);
+
+// 	_p.update = function() {
+// 		var matrix = this.getMatrix();
+
+// 		// TODO cross browser
+// 		this.element.style.webkitTransform = 'matrix(' + matrix.a11 + ',' + matrix.a21 + ',' + matrix.a12 + ',' + matrix.a22 + ',' + matrix.a13 + ',' + matrix.a23 + ')';	
+		
+// 		// update children
+// 		for (var i = 0; i < this.children.length; i++) {
+// 			this.children[i].update();
+// 		}
+// 	}
+
+// // scene
+// 	_p.addChild = function(child) {
+		
+// 		this.super.addChild.apply(this,arguments); // super
+// 		child.update();
+// 		//TODO use stage reference
+// 		document.getElementById('domStage').appendChild(child.element);
+// 	};
+
+// 	_p.removeChild = function(child) {
+// 		this.super.removeChild.apply(this,arguments); // super
+// 		//TODO use stage reference
+// 		document.getElementById('domStage').removeChild(child.element);
+// 	};
+
+// 	return DomNode;
+
+// });
+
+
+herman.namespace('Node',function(){
+	"use strict"
 
 	/**
-	 * [Node description]
+	 * Node
+	 * 
+	 * @class Node
+	 * @constructor
 	 */
 	function Node() {
 		this.tag = undefined;
@@ -373,8 +449,19 @@ herman.createModule('Node',function(){
 // prototype
 	Node.prototype = {
 
+		update : function(context) {        
+	        // update children
+	        this.children.forEach(function(element){
+	            element.update(context);
+	        });
+	    },
+
 	// transform
 		
+		/**
+		 * get world matrix
+		 * @return {herman.Matrix} 
+		 */
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
 			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
@@ -461,103 +548,72 @@ herman.createModule('Node',function(){
 
 });
 
-herman.createModule("dom.Node",function(){
-	//TODO composition
+herman.namespace("Sprite",function(){
 
-	/**
-	 * [DomNode description]
-	 * @param {[type]} element [description]
-	 */
-	function Node(element) {
-		herman.Node.call(this); 
-		
-		if(!element) {
-			// dev style
-			this.element = document.createElement("div");
-			this.element.className = "div-node";
-			this.element.style.width = '100px';
-			this.element.style.height = '100px';
-			this.element.style.backgroundColor = 'white';
-			this.element.style.border = '1px solid red';
-	
-		} else {
-			this.element = element;
-		}	
-
-		// force gpu rendering
-		this.element.style.webkitPerspective = 1000;
-		this.element.style.webkitBackfaceVisibility = "hidden";
-		// node styles
-		this.element.style.position = "absolute";
-	}
+    /**
+     * Canvas Node
+     * @constructor
+     */
+    function Sprite(bitmap) {
+        herman.Node.call(this);
+        this.bitmap = bitmap;
+    }
 
 // proto
-	var _p = herman.inherits(Node, herman.Node);
+    var _p = herman.inherits(Sprite, herman.Node);
 
-	_p.update = function() {
-		var matrix = this.getMatrix();
+    //TODO custom draw method
+    _p.draw = function(context) {
+        var matrix = this.getMatrix();
+        context.save();
+        context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
+        context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
+        context.restore();
+    }
 
-		// TODO cross browser
-		this.element.style.webkitTransform = 'matrix(' + matrix.a11 + ',' + matrix.a21 + ',' + matrix.a12 + ',' + matrix.a22 + ',' + matrix.a13 + ',' + matrix.a23 + ')';	
-		
-		// update children
-		for (var i = 0; i < this.children.length; i++) {
-			this.children[i].update();
-		}
-	}
+    _p.update = function(context) {
+        this.draw(context);
+        
+        // update children
+        this.children.forEach(function(element){
+            element.update(context);
+        });
+    }
 
-// scene
-	_p.addChild = function(child) {
-		
-		this.super.addChild.apply(this,arguments); // super
-		child.update();
-		//TODO use stage reference
-		document.getElementById('domStage').appendChild(child.element);
-	};
-
-	_p.removeChild = function(child) {
-		this.super.removeChild.apply(this,arguments); // super
-		//TODO use stage reference
-		document.getElementById('domStage').removeChild(child.element);
-	};
-
-	return Node;
+    return Sprite;
 
 });
 
 
-herman.createModule("canvas.Node",function(){
+herman.namespace("Text",function(){
 
-	/**
-	 * [Node description]
-	 */
-	function Node() {
-		herman.Node.call(this);
-		this.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
-	}
+    /**
+     * Text Node
+     * @constructor
+     */
+    function Text(text) {
+        herman.Node.call(this);
+        this.text = text;
+    }
 
 // proto
-	var _p = herman.inherits(Node, herman.Node);
+    var _p = herman.inherits(Text, herman.Node);
 
-	//TODO custom draw method
-	_p.draw = function(context) {
-		var matrix = this.getMatrix();
-		context.save();
-        context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
-        context.fillStyle = this.backgroundColor;
-        context.fillRect (-50, -50, 100, 100);
+    //TODO custom draw method
+    _p.draw = function(context) {
+        var matrix = this.getMatrix();
+        context.save();
+            context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
+            context.fillStyle = "#00F";
+            context.font = "italic 30pt Arial";
+            context.fillText(this.text, 20, 50);
         context.restore();
-	}
+    };
 
-	_p.update = function(context) {
-		this.draw(context);
-		
-		// update children
-		this.children.forEach(function(element){
-			element.update(context);
-		});
-	}
+    _p.update = function(context) {
+        this.draw(context);
+    };
 
-	return Node;
+    return Text;
 
 });

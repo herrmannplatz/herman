@@ -1,0 +1,336 @@
+{
+    "project": {
+        "name": "herman",
+        "description": "",
+        "version": "0.1.0",
+        "url": ""
+    },
+    "files": {
+        "build/herman.js": {
+            "name": "build/herman.js",
+            "modules": {},
+            "classes": {
+                "Node": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "Node": {
+            "name": "Node",
+            "shortname": "Node",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "build/herman.js",
+            "line": 425,
+            "description": "Node",
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "build/herman.js",
+            "line": 8,
+            "description": "create namespace",
+            "params": [
+                {
+                    "name": "namespace",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 27,
+            "description": "prototypical inheritance helper",
+            "params": [
+                {
+                    "name": "child",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "parent",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 56,
+            "params": [
+                {
+                    "name": "canvas",
+                    "description": "",
+                    "type": "HTMLCanvasElement"
+                }
+            ],
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 71,
+            "description": "trigger node update",
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 99,
+            "description": "Degrees to radians helper",
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 113,
+            "description": "3x3 Matrix",
+            "is_constructor": 1,
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 129,
+            "description": "[translate description]",
+            "params": [
+                {
+                    "name": "tx",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "ty",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Matrix"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 141,
+            "description": "[rotate description]",
+            "params": [
+                {
+                    "name": "angle",
+                    "description": "radians",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Matrix"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 160,
+            "description": "[scale description]",
+            "params": [
+                {
+                    "name": "scale",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Matrix"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 173,
+            "description": "[transform description]",
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 180,
+            "description": "[multiply description]",
+            "params": [
+                {
+                    "name": "m",
+                    "description": "",
+                    "type": "Matrix"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Matrix"
+            },
+            "example": [
+                "\n\n\t\t\t\t\t| m.a11 m.a12 m.a13 |\n    \t\t\t\t| m.a21 m.a22 m.a23 |\n        \t\t\t| m.a31 m.a32 m.a33 |\n| a11 a12 a13 |\n| a21 a22 a23 |\n| a31 a32 a33 |\n"
+            ],
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 215,
+            "description": "[identity description]",
+            "return": {
+                "description": "[description]",
+                "type": "Matrix"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 229,
+            "description": "[toString description]",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 249,
+            "description": "Vector",
+            "is_constructor": 1,
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 274,
+            "description": "flash like tweening object",
+            "example": [
+                "\nvar tween = new Tween(node, { x : 100 }, 1000);\ntween.done = function() { console.log('tweening finished') }\ntween.start();"
+            ],
+            "params": [
+                {
+                    "name": "target",
+                    "description": "[description]",
+                    "type": "herman.Node"
+                },
+                {
+                    "name": "properties",
+                    "description": "[description]",
+                    "type": "Object"
+                },
+                {
+                    "name": "duration",
+                    "description": "[description]",
+                    "type": "Number"
+                }
+            ],
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 461,
+            "description": "get world matrix",
+            "return": {
+                "description": "",
+                "type": "herman.Matrix"
+            },
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 553,
+            "description": "Canvas Node",
+            "is_constructor": 1,
+            "class": "Node"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 590,
+            "description": "Text Node",
+            "is_constructor": 1,
+            "class": "Node"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\ncreate namespace",
+            "line": " build/herman.js:8"
+        },
+        {
+            "message": "Missing item type\nprototypical inheritance helper",
+            "line": " build/herman.js:27"
+        },
+        {
+            "message": "Missing item type",
+            "line": " build/herman.js:56"
+        },
+        {
+            "message": "Missing item type\ntrigger node update",
+            "line": " build/herman.js:71"
+        },
+        {
+            "message": "Missing item type\nDegrees to radians helper",
+            "line": " build/herman.js:99"
+        },
+        {
+            "message": "Missing item type\n3x3 Matrix",
+            "line": " build/herman.js:113"
+        },
+        {
+            "message": "Missing item type\n[translate description]",
+            "line": " build/herman.js:129"
+        },
+        {
+            "message": "Missing item type\n[rotate description]",
+            "line": " build/herman.js:141"
+        },
+        {
+            "message": "Missing item type\n[scale description]",
+            "line": " build/herman.js:160"
+        },
+        {
+            "message": "Missing item type\n[transform description]",
+            "line": " build/herman.js:173"
+        },
+        {
+            "message": "Missing item type\n[multiply description]",
+            "line": " build/herman.js:180"
+        },
+        {
+            "message": "Missing item type\n[identity description]",
+            "line": " build/herman.js:215"
+        },
+        {
+            "message": "Missing item type\n[toString description]",
+            "line": " build/herman.js:229"
+        },
+        {
+            "message": "Missing item type\nVector",
+            "line": " build/herman.js:249"
+        },
+        {
+            "message": "Missing item type\nflash like tweening object",
+            "line": " build/herman.js:274"
+        },
+        {
+            "message": "Missing item type\nget world matrix",
+            "line": " build/herman.js:461"
+        },
+        {
+            "message": "Missing item type\nCanvas Node",
+            "line": " build/herman.js:553"
+        },
+        {
+            "message": "Missing item type\nText Node",
+            "line": " build/herman.js:590"
+        }
+    ]
+}
