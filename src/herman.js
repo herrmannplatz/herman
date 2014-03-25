@@ -1,12 +1,20 @@
 
-window.herman = window.herman || {};
+(function(window) {
 
-(function(herman) {
+    /**
+     * @module herman
+     * @type {[type]}
+     */
+    var herman = window.herman = {};    
 
+    /**
+     * @property {Number} VERSION herman version
+     */
     herman.VERSION = 0.1;
 
     /**
      * create namespace
+     * @method namespace
      * @param  {string} namespace 
      */
     herman.namespace = function(namespace, func) {
@@ -48,4 +56,4 @@ window.herman = window.herman || {};
             };
     })();
 
-})(window.herman);
+})(window);

@@ -1,12 +1,20 @@
 
-window.herman = window.herman || {};
+(function(window) {
 
-(function(herman) {
+    /**
+     * @module herman
+     * @type {[type]}
+     */
+    var herman = window.herman = {};    
 
+    /**
+     * @property {Number} VERSION herman version
+     */
     herman.VERSION = 0.1;
 
     /**
      * create namespace
+     * @method namespace
      * @param  {string} namespace 
      */
     herman.namespace = function(namespace, func) {
@@ -48,7 +56,7 @@ window.herman = window.herman || {};
             };
     })();
 
-})(window.herman);
+})(window);
 
 herman.namespace('Renderer',function(){
     "use strict"  
@@ -60,10 +68,6 @@ herman.namespace('Renderer',function(){
     function Renderer(canvas) {
         this.canvas = canvas;
         this.context = this.canvas.getContext("2d");  
-        this.buffer = document.createElement('canvas');
-        this.buffer.width = this.canvas.width;
-        this.buffer.height = this.canvas.height;
-        this.bufferContext = this.buffer.getContext("2d");  
     }
 
     Renderer.prototype = {
@@ -74,15 +78,9 @@ herman.namespace('Renderer',function(){
         update: function(node) {
             // clear
             this.canvas.width = this.canvas.width;
-            this.buffer.width = this.buffer.width;
-            // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            // this.bufferContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
             
             // draw into buffer
-            node.update(this.bufferContext);
-
-            // draw buffer data on screen
-            this.context.drawImage(this.buffer, 0, 0);
+            node.update(this.context);
         }
         
     };
@@ -133,8 +131,8 @@ herman.namespace('Matrix',function(){
 		 * @return {Matrix}
 		 */
 		translate : function(tx, ty) {
-			this.a13 += tx | 0;
-			this.a23 += ty | 0;
+			this.a13 += tx; //Math.round(tx); // tx | 0;
+			this.a23 += ty; //Math.round(ty); // ty | 0;
 			return this;
 		},
 

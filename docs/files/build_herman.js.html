@@ -47,6 +47,8 @@
 
             <ul id="api-modules" class="apis modules">
             
+                <li><a href="../modules/herman.html">herman</a></li>
+            
             </ul>
         </div>
     </div>
@@ -87,14 +89,22 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 
-window.herman = window.herman || {};
+(function(window) {
 
-(function(herman) {
+    /**
+     * @module herman
+     * @type {[type]}
+     */
+    var herman = window.herman = {};    
 
+    /**
+     * @property {Number} VERSION herman version
+     */
     herman.VERSION = 0.1;
 
     /**
      * create namespace
+     * @method namespace
      * @param  {string} namespace 
      */
     herman.namespace = function(namespace, func) {
@@ -136,7 +146,7 @@ window.herman = window.herman || {};
             };
     })();
 
-})(window.herman);
+})(window);
 
 herman.namespace(&#x27;Renderer&#x27;,function(){
     &quot;use strict&quot;  
@@ -148,10 +158,6 @@ herman.namespace(&#x27;Renderer&#x27;,function(){
     function Renderer(canvas) {
         this.canvas = canvas;
         this.context = this.canvas.getContext(&quot;2d&quot;);  
-        this.buffer = document.createElement(&#x27;canvas&#x27;);
-        this.buffer.width = this.canvas.width;
-        this.buffer.height = this.canvas.height;
-        this.bufferContext = this.buffer.getContext(&quot;2d&quot;);  
     }
 
     Renderer.prototype = {
@@ -162,15 +168,9 @@ herman.namespace(&#x27;Renderer&#x27;,function(){
         update: function(node) {
             // clear
             this.canvas.width = this.canvas.width;
-            this.buffer.width = this.buffer.width;
-            // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            // this.bufferContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
             
             // draw into buffer
-            node.update(this.bufferContext);
-
-            // draw buffer data on screen
-            this.context.drawImage(this.buffer, 0, 0);
+            node.update(this.context);
         }
         
     };
@@ -221,8 +221,8 @@ herman.namespace(&#x27;Matrix&#x27;,function(){
 		 * @return {Matrix}
 		 */
 		translate : function(tx, ty) {
-			this.a13 += tx | 0;
-			this.a23 += ty | 0;
+			this.a13 += tx; //Math.round(tx); // tx | 0;
+			this.a23 += ty; //Math.round(ty); // ty | 0;
 			return this;
 		},
 
