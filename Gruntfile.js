@@ -47,13 +47,14 @@ module.exports = function(grunt) {
 
   });
 
-  // tasks
+  // modules
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
-  // Default task(s).
-  grunt.registerTask('default', ['concat','yuidoc','uglify','jasmine']);
+  // tasks
+  grunt.registerTask('default', ['concat','jasmine']);
+  grunt.registerTask('deploy', ['concat','yuidoc','uglify','jasmine']);
 
 };

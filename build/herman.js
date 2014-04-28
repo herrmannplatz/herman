@@ -110,6 +110,7 @@ herman.namespace('Matrix',function(){
 
 	/**
 	 * 3x3 Matrix
+	 * @class Matrix
 	 * @constructor
 	 */
 	function Matrix() {
@@ -246,6 +247,7 @@ herman.namespace('Vector',function(){
 
     /**
      * Vector
+     * @class Vector
      * @constructor
      */
     function Vector(x, y) {

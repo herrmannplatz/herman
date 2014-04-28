@@ -4,6 +4,7 @@ herman.namespace('Vector',function(){
 
     /**
      * Vector
+     * @class Vector
      * @constructor
      */
     function Vector(x, y) {

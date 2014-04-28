@@ -7,6 +7,7 @@ herman.namespace('Matrix',function(){
 
 	/**
 	 * 3x3 Matrix
+	 * @class Matrix
 	 * @constructor
 	 */
 	function Matrix() {
