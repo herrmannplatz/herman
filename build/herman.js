@@ -89,10 +89,10 @@ herman.namespace('Renderer',function(){
 
 });
 
-herman.namespace('Math',function(){
+herman.namespace('math.Utils',function(){
     "use strict"
 
-    return {
+    var Utils = {
 
         /**
          * Degrees to radians helper
@@ -114,9 +114,11 @@ herman.namespace('Math',function(){
         intersect : function() {l1, l2}
     };
 
+    return Utils;
+
 });
 
-herman.namespace('Matrix',function(){
+herman.namespace('math.Matrix',function(){
 
 	// TODO scaleX, scaleY or scaleNonUniform
 
@@ -136,127 +138,127 @@ herman.namespace('Matrix',function(){
 		this.a22 = 1;
 		this.a23 = 0;
 	}
+	
+	/**
+	 * [translate description]
+	 * @param  {Number} tx
+	 * @param  {Number} ty
+	 * @return {Matrix}
+	 */
+	Matrix.prototype.translate = function(tx, ty) {
+		this.a13 += tx; //Math.round(tx); // tx | 0;
+		this.a23 += ty; //Math.round(ty); // ty | 0;
+		return this;
+	};
 
-	Matrix.prototype = {
+	/**
+	 * [rotate description]
+	 * @param  {Number} angle radians
+	 * @return {Matrix}
+	 */
+	Matrix.prototype.rotate = function(angle) {
+		angle = (angle*herman.math.Utils.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
+		var sin = Math.sin(angle);
+		var cos = Math.cos(angle);
+		var a11 = this.a11;
+		var a21 = this.a21;
+
+		this.a11 = (cos*a11) + (sin*this.a12); 
+		this.a12 = (-sin*a11) + (cos*this.a12); 
+		this.a21 = (cos*a21) + (sin*this.a22);
+		this.a22 = (-sin*a21) + (cos*this.a22); 
+		return this;
+	};
+
+	/**
+	 * [scale description]
+	 * @param  {Number} scale
+	 * @return {Matrix}
+	 */
+	Matrix.prototype.scale = function(scale) {
+		this.a11 *= scale; 
+		this.a12 *= scale;  
+		this.a21 *= scale; 
+		this.a22 *= scale; 
+		return this;
+	};
+
+	/**
+	 * [transform description]
+	 */
+	Matrix.prototype.transform = function(tx, ty, angle, scale) {
+		return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+	};
+
+	/**
+	 * [multiply description]
+	 * @param  {Matrix} m
+	 * @return {Matrix}
+	 *
+	 * @example
+	 * 
+	 *					| m.a11 m.a12 m.a13 |
+	 *     				| m.a21 m.a22 m.a23 |
+	 *         			| m.a31 m.a32 m.a33 |
+	 * | a11 a12 a13 |
+	 * | a21 a22 a23 |
+	 * | a31 a32 a33 |
+	 * 
+	 */
+	Matrix.prototype.multiply = function(m) {
+		var a11 = this.a11;
+		var a12 = this.a12; 
+		var a21 = this.a21;
+		var a22 = this.a22;
+
+		this.a11 = (a11*m.a11) + (a12*m.a21);
+		this.a12 = (a11*m.a12) + (a12*m.a22); 
+		this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
+
+		this.a21 = (a21*m.a11) + (a22*m.a21);
+		this.a22 = (a21*m.a12) + (a22*m.a22);
+		this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+		return this;
+	};
+
+	/**
+	 * [invert description]
+	 * @return {[type]} [description]
+	 */
+	Matrix.prototype.invert = function() {
 		
-		/**
-		 * [translate description]
-		 * @param  {Number} tx
-		 * @param  {Number} ty
-		 * @return {Matrix}
-		 */
-		translate : function(tx, ty) {
-			this.a13 += tx; //Math.round(tx); // tx | 0;
-			this.a23 += ty; //Math.round(ty); // ty | 0;
-			return this;
-		},
+	};
 
-		/**
-		 * [rotate description]
-		 * @param  {Number} angle radians
-		 * @return {Matrix}
-		 */
-		rotate : function(angle) {
-			angle = (angle*herman.Math.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
-			var sin = Math.sin(angle);
-			var cos = Math.cos(angle);
-			var a11 = this.a11;
-			var a21 = this.a21;
+	/**
+	 * [identity description]
+	 * @return {Matrix} [description]
+	 */
+	Matrix.prototype.identity = function() {
+		this.a11 = 1; 
+		this.a12 = 0;
+		this.a13 = 0;
+		this.a21 = 0;
+		this.a22 = 1;
+		this.a23 = 0;
+		return this;
+	};
 
-			this.a11 = (cos*a11) + (sin*this.a12); 
-			this.a12 = (-sin*a11) + (cos*this.a12); 
-			this.a21 = (cos*a21) + (sin*this.a22);
-			this.a22 = (-sin*a21) + (cos*this.a22); 
-			return this;
-		},
-
-		/**
-		 * [scale description]
-		 * @param  {Number} scale
-		 * @return {Matrix}
-		 */
-		scale : function(scale) {
-			this.a11 *= scale; 
-			this.a12 *= scale;  
-			this.a21 *= scale; 
-			this.a22 *= scale; 
-			return this;
-		},
-
-		/**
-		 * [transform description]
-		 */
-		transform : function(tx, ty, angle, scale) {
-			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
-		},
-
-		/**
-		 * [multiply description]
-		 * @param  {Matrix} m
-		 * @return {Matrix}
-		 *
-		 * @example
-		 * 
-		 *					| m.a11 m.a12 m.a13 |
-		 *     				| m.a21 m.a22 m.a23 |
-		 *         			| m.a31 m.a32 m.a33 |
-		 * | a11 a12 a13 |
-		 * | a21 a22 a23 |
-		 * | a31 a32 a33 |
-		 * 
-		 */
-		multiply : function(m) {
-			var a11 = this.a11;
-			var a12 = this.a12; 
-			var a21 = this.a21;
-			var a22 = this.a22;
-
-			this.a11 = (a11*m.a11) + (a12*m.a21);
-			this.a12 = (a11*m.a12) + (a12*m.a22); 
-			this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
-
-			this.a21 = (a21*m.a11) + (a22*m.a21);
-			this.a22 = (a21*m.a12) + (a22*m.a22);
-			this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
-			return this;
-		},
-
-		invert : function() {
-			
-		},
-
-		/**
-		 * [identity description]
-		 * @return {Matrix} [description]
-		 */
-		identity : function() {
-			this.a11 = 1; 
-			this.a12 = 0;
-			this.a13 = 0;
-			this.a21 = 0;
-			this.a22 = 1;
-			this.a23 = 0;
-			return this;
-		},
-
-		/**
-		 * [toString description]
-		 * @return {String}
-		 */
-		print : function() {
-			return 	'matrix' + '\n' +
-					this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
-					this.a21 + ' ' + this.a22 + ' ' + this.a23 + '\n' + 
-					'[0]'	 + ' ' + '[0]'	  + ' ' + '[1]'	   + '\n';
-		}
-
+	/**
+	 * [toString description]
+	 * @return {String}
+	 */
+	Matrix.prototype.print = function() {
+		return 	'matrix' + '\n' +
+				this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
+				this.a21 + ' ' + this.a22 + ' ' + this.a23 + '\n' + 
+				'[0]'	 + ' ' + '[0]'	  + ' ' + '[1]'	   + '\n';
 	};
 
 	return Matrix;
 
 });
 
-herman.namespace('Vector',function(){
+herman.namespace('math.Vector',function(){
     "use strict"
 
     /**
@@ -270,35 +272,53 @@ herman.namespace('Vector',function(){
         return this;
     }
 
-    Vector.prototype = {
-        
-        add: function(vec) {
-            this.x += vec.x;
-            this.y += vec.y;
-            return this;
-        },
+    /**
+     * [add description]
+     * @param {[type]} vec [description]
+     */
+    Vector.prototype.add  = function(vec) {
+        this.x += vec.x;
+        this.y += vec.y;
+        return this;
+    };
 
-        substract : function(vec) {
-            this.x -= vec.x;
-            this.y -= vec.y;
-            return this;
-        },
+    /**
+     * [substract description]
+     * @param  {[type]} vec [description]
+     * @return {[type]}     [description]
+     */
+    Vector.prototype.substract = function(vec) {
+        this.x -= vec.x;
+        this.y -= vec.y;
+        return this;
+    };
 
-        normalize : function() {
-            var length = this.length();
-            this.x /= length;
-            this.y /= length;
-            return this;
-        },
+    /**
+     * [normalize description]
+     * @return {[type]} [description]
+     */
+    Vector.prototype.normalize = function() {
+        var length = this.length();
+        this.x /= length;
+        this.y /= length;
+        return this;
+    };
 
-        dot : function(vec) {
-            return this.x * vec.x + this.y * vec.y;
-        },
-
-        length : function() {
-            return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-        }
-        
+    /**
+     * [dot description]
+     * @param  {[type]} vec [description]
+     * @return {[type]}     [description]
+     */
+    Vector.prototype.dot = function(vec) {
+        return this.x * vec.x + this.y * vec.y;
+    };
+    
+    /**
+     * [length description]
+     * @return {[type]} [description]
+     */
+    Vector.prototype.length = function() {
+        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     };
 
     return Vector;
@@ -470,7 +490,7 @@ herman.namespace('Node',function(){
 		this.stage = undefined;
 		this.parent = undefined;
 		this.children = [];
-		this.matrix = new herman.Matrix(); // calculate on the fly
+		this.matrix = new herman.math.Matrix(); // calculate on the fly
 		this.x = 0;
 		this.y = 0;
 		this.scale = 1;
@@ -501,7 +521,7 @@ herman.namespace('Node',function(){
 		 */
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
-			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+			this.matrix = new herman.math.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
 
 			if (this.parent) {
 				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
@@ -512,14 +532,14 @@ herman.namespace('Node',function(){
 		localToGlobal : function(x, y) {
 			var mat = this.getMatrix();
 			mat.translate(x, y);
-			return new herman.Vector(mat.a13, mat.a23);
+			return new herman.math.Vector(mat.a13, mat.a23);
 
 		},
 
 		globalToLocal : function(x, y) {
 			// get mat, invert mat, append x,y
 			var mat = this.getMatrix();
-			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
+			return new herman.math.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
 		},
 
 	// scene graph

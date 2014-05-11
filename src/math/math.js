@@ -1,8 +1,8 @@
 
-herman.namespace('Math',function(){
+herman.namespace('math.Utils',function(){
     "use strict"
 
-    return {
+    var Utils = {
 
         /**
          * Degrees to radians helper
@@ -23,5 +23,7 @@ herman.namespace('Math',function(){
          */
         intersect : function() {l1, l2}
     };
+
+    return Utils;
 
 });

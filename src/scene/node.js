@@ -13,7 +13,7 @@ herman.namespace('Node',function(){
 		this.stage = undefined;
 		this.parent = undefined;
 		this.children = [];
-		this.matrix = new herman.Matrix(); // calculate on the fly
+		this.matrix = new herman.math.Matrix(); // calculate on the fly
 		this.x = 0;
 		this.y = 0;
 		this.scale = 1;
@@ -44,7 +44,7 @@ herman.namespace('Node',function(){
 		 */
 		getMatrix : function() {	
 			//this.matrix.identity(); // clear		
-			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+			this.matrix = new herman.math.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
 
 			if (this.parent) {
 				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
@@ -55,14 +55,14 @@ herman.namespace('Node',function(){
 		localToGlobal : function(x, y) {
 			var mat = this.getMatrix();
 			mat.translate(x, y);
-			return new herman.Vector(mat.a13, mat.a23);
+			return new herman.math.Vector(mat.a13, mat.a23);
 
 		},
 
 		globalToLocal : function(x, y) {
 			// get mat, invert mat, append x,y
 			var mat = this.getMatrix();
-			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
+			return new herman.math.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -> 10, 10
 		},
 
 	// scene graph
