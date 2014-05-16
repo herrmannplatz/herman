@@ -1,28 +1,36 @@
-describe('Node tests', function() {
+describe('herman Node', function() {
+
+    describe('addChild', function() {
+
+        it('without children', function() {
+            var n = new herman.Node();
+            expect(n.getChildren().length).toEqual(0);
+        });
+
+        it('with excact one child', function() {
+            var p = new herman.Node();
+            var c = new herman.Node();
+            p.addChild(c);
+            expect(p.hasChild(c)).toEqual(true);
+            expect(p.getChildren().length).toEqual(1);
+            expect(c.parent).toEqual(p);
+        });
+
+        it('with null added as child', function() {
+            var p = new herman.Node();
+            p.addChild(null);
+            expect(p.getChildren().length).toEqual(0);
+        });
+
+        it('with an empty object added as child', function() {
+            var p = new herman.Node();
+            p.addChild({});
+            expect(p.getChildren().length).toEqual(0);
+        });
+
+    });
 
     it('addChild', function() {
-        // no child
-        var n1 = new herman.Node();
-        expect(n1.getChildren().length).toEqual(0);
-
-        // add one child
-        var n2 = new herman.Node();
-        var c = new herman.Node();
-        n2.addChild(c);
-        expect(n2.hasChild(c)).toEqual(true);
-        expect(n2.getChildren().length).toEqual(1);
-        expect(c.parent).toEqual(n2);
-
-        // add null
-        var n4 = new herman.Node();
-        n4.addChild(null);
-        expect(n4.getChildren().length).toEqual(0);
-
-        // add object
-        var n5 = new herman.Node();
-        n5.addChild({});
-        expect(n5.getChildren().length).toEqual(0);
-
         // add object to two different nodes
         var n6 = new herman.Node();
         var n7 = new herman.Node();

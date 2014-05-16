@@ -33,7 +33,7 @@ herman.namespace('math.Matrix',function(){
 	};
 
 	/**
-	 * [rotate description]
+	 * [rotate description]j
 	 * @param  {Number} angle radians
 	 * @return {Matrix}
 	 */
@@ -108,6 +108,20 @@ herman.namespace('math.Matrix',function(){
 	 */
 	Matrix.prototype.invert = function() {
 		
+	};
+
+	/**
+	 * [determinant description]
+	 *
+	 * | a11 a12 a13 | a11 a12
+	 * | a21 a22 a23 | a21 a22
+	 * | a31 a32 a33 | a31 a32
+	 *
+	 * @return {[type]} [description]
+	 */
+	Matrix.prototype.determinant = function() {
+		return this.a11 * this.a22 - this.a21 * this.a12;
+
 	};
 
 	/**
