@@ -1,6 +1,7 @@
 
-herman.namespace("Text",function(){
-
+herman.namespace("Text", function() {
+    "use strict";
+    
     /**
      * Text Node
      * @constructor

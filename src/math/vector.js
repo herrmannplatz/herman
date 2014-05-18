@@ -1,6 +1,6 @@
 
-herman.namespace('math.Vector',function(){
-    "use strict"
+herman.namespace('math.Vector', function() {
+    "use strict";
 
     /**
      * Vector

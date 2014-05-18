@@ -1,6 +1,6 @@
 
-herman.namespace('Renderer',function(){
-    "use strict"  
+herman.namespace('Renderer', function() {
+    "use strict";  
 
     /**
      * 

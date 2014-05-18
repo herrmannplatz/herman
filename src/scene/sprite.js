@@ -1,6 +1,7 @@
 
-herman.namespace("Sprite",function(){
-
+herman.namespace("Sprite", function() {
+    "use strict";
+    
     /**
      * Canvas Node
      * @constructor
@@ -20,7 +21,7 @@ herman.namespace("Sprite",function(){
         context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
         context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
         context.restore();
-    }
+    };
 
     _p.update = function(context) {
         this.draw(context);
@@ -29,7 +30,7 @@ herman.namespace("Sprite",function(){
         this.children.forEach(function(element){
             element.update(context);
         });
-    }
+    };
 
     return Sprite;
 

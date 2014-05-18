@@ -1,6 +1,6 @@
 
-herman.namespace('Tween',function(){
-    "use strict"
+herman.namespace('Tween', function() {
+    "use strict";
 
     /**
      * flash like tweening object
@@ -59,7 +59,9 @@ herman.namespace('Tween',function(){
                 if (progress < 1) {
                     requestID = window.requestAnimationFrame(update); 
                 } else {
-                    done && done();
+                    if(done) {
+                        done();    
+                    } 
                     window.cancelAnimationFrame(requestID);      
                 }
 
@@ -71,7 +73,7 @@ herman.namespace('Tween',function(){
         };
 
         tween.clone = function() {
-            return new Tween(target, property, duration);
+            return new Tween(target, properties, duration);
         };
 
         tween.done = function(callback) {

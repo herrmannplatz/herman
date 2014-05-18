@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.1.0</em>
+            <em>API Docs for: 0.1.1</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -152,8 +152,8 @@
 
 })(window);
 
-herman.namespace(&#x27;Renderer&#x27;,function(){
-    &quot;use strict&quot;  
+herman.namespace(&#x27;Renderer&#x27;, function() {
+    &quot;use strict&quot;;  
 
     /**
      * 
@@ -183,161 +183,214 @@ herman.namespace(&#x27;Renderer&#x27;,function(){
 
 });
 
-herman.namespace(&#x27;Math&#x27;,function(){
-    &quot;use strict&quot;
+herman.namespace(&#x27;math.Utils&#x27;, function() {
+    &quot;use strict&quot;;
 
-    return {
+    var Utils = {
 
         /**
          * Degrees to radians helper
          */
-        DEG_TO_RAD : Math.PI/180
+        DEG_TO_RAD : Math.PI/180,
+
+        /**
+         * [angleBetweenPoints description]
+         * @param  {[type]} p1 [description]
+         * @param  {[type]} p2 [description]
+         * @return {[type]}    [description]
+         */
+        angleBetweenPoints : function(p1, p2) {},
+
+        /**
+         * [intersect description]
+         * @return {[type]} [description]
+         */
+        intersect : function(l1, l2) {}
     };
 
-});
-
-herman.namespace(&#x27;Matrix&#x27;,function(){
-
-	// TODO scaleX, scaleY or scaleNonUniform
-
-	var PRECISION = 5;
-
-	/**
-	 * 3x3 Matrix
-	 * @class Matrix
-	 * @constructor
-	 */
-	function Matrix() {
-		//TODO param? (a,b,c,d,e,f) or (matrix), rename members
-		this.a11 = 1; 
-		this.a12 = 0;
-		this.a13 = 0;
-		this.a21 = 0;
-		this.a22 = 1;
-		this.a23 = 0;
-	}
-
-	Matrix.prototype = {
-		
-		/**
-		 * [translate description]
-		 * @param  {Number} tx
-		 * @param  {Number} ty
-		 * @return {Matrix}
-		 */
-		translate : function(tx, ty) {
-			this.a13 += tx; //Math.round(tx); // tx | 0;
-			this.a23 += ty; //Math.round(ty); // ty | 0;
-			return this;
-		},
-
-		/**
-		 * [rotate description]
-		 * @param  {Number} angle radians
-		 * @return {Matrix}
-		 */
-		rotate : function(angle) {
-			angle = (angle*herman.Math.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
-			var sin = Math.sin(angle);
-			var cos = Math.cos(angle);
-			var a11 = this.a11;
-			var a21 = this.a21;
-
-			this.a11 = (cos*a11) + (sin*this.a12); 
-			this.a12 = (-sin*a11) + (cos*this.a12); 
-			this.a21 = (cos*a21) + (sin*this.a22);
-			this.a22 = (-sin*a21) + (cos*this.a22); 
-			return this;
-		},
-
-		/**
-		 * [scale description]
-		 * @param  {Number} scale
-		 * @return {Matrix}
-		 */
-		scale : function(scale) {
-			this.a11 *= scale; 
-			this.a12 *= scale;  
-			this.a21 *= scale; 
-			this.a22 *= scale; 
-			return this;
-		},
-
-		/**
-		 * [transform description]
-		 */
-		transform : function(tx, ty, angle, scale) {
-			return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
-		},
-
-		/**
-		 * [multiply description]
-		 * @param  {Matrix} m
-		 * @return {Matrix}
-		 *
-		 * @example
-		 * 
-		 *					| m.a11 m.a12 m.a13 |
-		 *     				| m.a21 m.a22 m.a23 |
-		 *         			| m.a31 m.a32 m.a33 |
-		 * | a11 a12 a13 |
-		 * | a21 a22 a23 |
-		 * | a31 a32 a33 |
-		 * 
-		 */
-		multiply : function(m) {
-			var a11 = this.a11;
-			var a12 = this.a12; 
-			var a21 = this.a21;
-			var a22 = this.a22;
-
-			this.a11 = (a11*m.a11) + (a12*m.a21);
-			this.a12 = (a11*m.a12) + (a12*m.a22); 
-			this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
-
-			this.a21 = (a21*m.a11) + (a22*m.a21);
-			this.a22 = (a21*m.a12) + (a22*m.a22);
-			this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
-			return this;
-		},
-
-		invert : function() {
-			
-		},
-
-		/**
-		 * [identity description]
-		 * @return {Matrix} [description]
-		 */
-		identity : function() {
-			this.a11 = 1; 
-			this.a12 = 0;
-			this.a13 = 0;
-			this.a21 = 0;
-			this.a22 = 1;
-			this.a23 = 0;
-			return this;
-		},
-
-		/**
-		 * [toString description]
-		 * @return {String}
-		 */
-		print : function() {
-			return 	&#x27;matrix&#x27; + &#x27;\n&#x27; +
-					this.a11 + &#x27; &#x27; + this.a12 + &#x27; &#x27; + this.a13 + &#x27;\n&#x27; +  
-					this.a21 + &#x27; &#x27; + this.a22 + &#x27; &#x27; + this.a23 + &#x27;\n&#x27; + 
-					&#x27;[0]&#x27;	 + &#x27; &#x27; + &#x27;[0]&#x27;	  + &#x27; &#x27; + &#x27;[1]&#x27;	   + &#x27;\n&#x27;;
-		}
-
-	};
-
-	return Matrix;
+    return Utils;
 
 });
 
-herman.namespace(&#x27;Vector&#x27;,function(){
-    &quot;use strict&quot;
+herman.namespace(&#x27;math.Matrix&#x27;, function() {
+    &quot;use strict&quot;;
+
+    //TODO: scaleX, scaleY or scaleNonUniform
+
+    var PRECISION = 15;
+
+    /**
+     * 3x3 Matrix
+     * @class Matrix
+     * @constructor
+     */
+    function Matrix() {
+        //TODO param? (a,b,c,d,e,f) or (matrix), rename members
+        this.identity();
+    }
+    
+    /**
+     * [translate description]
+     * @param  {Number} tx
+     * @param  {Number} ty
+     * @return {Matrix}
+     */
+    Matrix.prototype.translate = function(tx, ty) {
+        this.a13 += tx; //Math.round(tx); // tx | 0;
+        this.a23 += ty; //Math.round(ty); // ty | 0;
+        return this;
+    };
+
+    /**
+     * [rotate description]j
+     * @param  {Number} angle radians
+     * @return {Matrix}
+     */
+    Matrix.prototype.rotate = function(angle) {
+        angle = (angle*herman.math.Utils.DEG_TO_RAD).toFixed(PRECISION); // or use radians?
+        var sin = Math.sin(angle);
+        var cos = Math.cos(angle);
+        var a11 = this.a11;
+        var a21 = this.a21;
+
+        this.a11 = (cos*a11) + (sin*this.a12); 
+        this.a12 = (-sin*a11) + (cos*this.a12); 
+        this.a21 = (cos*a21) + (sin*this.a22);
+        this.a22 = (-sin*a21) + (cos*this.a22); 
+        return this;
+    };
+
+    /**
+     * [scale description]
+     * @param  {Number} scale
+     * @return {Matrix}
+     */
+    Matrix.prototype.scale = function(scale) {
+        this.a11 *= scale; 
+        this.a12 *= scale;  
+        this.a21 *= scale; 
+        this.a22 *= scale; 
+        return this;
+    };
+
+    /**
+     * [transform description]
+     */
+    Matrix.prototype.transform = function(tx, ty, angle, scale) {
+        return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+    };
+
+    /**
+     * [multiply description]
+     * @param  {Matrix} m
+     * @return {Matrix}
+     *
+     * @example
+     * 
+     *                  | m.a11 m.a12 m.a13 |
+     *                  | m.a21 m.a22 m.a23 |
+     *                  | m.a31 m.a32 m.a33 |
+     * | a11 a12 a13 |
+     * | a21 a22 a23 |
+     * | a31 a32 a33 |
+     * 
+     */
+    Matrix.prototype.multiply = function(m) {
+        var a11 = this.a11;
+        var a12 = this.a12; 
+        var a21 = this.a21;
+        var a22 = this.a22;
+
+        this.a11 = (a11*m.a11) + (a12*m.a21);
+        this.a12 = (a11*m.a12) + (a12*m.a22); 
+        this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
+
+        this.a21 = (a21*m.a11) + (a22*m.a21);
+        this.a22 = (a21*m.a12) + (a22*m.a22);
+        this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+        return this;
+    };
+
+    /**
+     * [invert description]
+     *
+     * | |a22 a23| |a13 a12| |a12 a13| |
+     * | |a32 a33| |a33 a32| |a22 a23| |
+     * |                               |    
+     * | |a23 a21| |a11 a13| |a13 a11| |
+     * | |a33 a31| |a31 a33| |a23 a21| |
+     * |                               |
+     * | |a21 a22| |a12 a11| |a11 a12| |
+     * | |a31 a32| |a32 a31| |a21 a22| |
+     *
+     * @return {[type]} [description]
+     */
+    Matrix.prototype.inverse = function() {
+        //TODO: check determinant
+        var invdet = 1/this.determinant();
+        var m = new Matrix();
+        m.a11 = this.a22 * invdet;
+        m.a12 = -this.a12 * invdet;
+        m.a13 = (this.a12 * this.a23 - this.a22 * this.a13) * invdet;
+        m.a21 = -this.a21 * invdet;
+        m.a22 = this.a11 * invdet;
+        m.a23 = (this.a13 * this.a21 - this.a23 * this.a11) * invdet;
+        m.a31 = 0;
+        m.a32 = 0;
+        m.a33 = (this.a11 * this.a22 - this.a21 * this.a12) * invdet;
+        return m;
+    };
+
+    /**
+     * [determinant description]
+     *
+     * | a11 a12 a13 | a11 a12
+     * | a21 a22 a23 | a21 a22
+     * | a31 a32 a33 | a31 a32
+     *
+     * @return {Number}
+     */
+    Matrix.prototype.determinant = function() {
+        return this.a11 * this.a22 - this.a21 * this.a12;
+
+    };
+
+    /**
+     * [identity description]
+     * @return {Matrix} 
+     */
+    Matrix.prototype.identity = function() {
+        this.a11 = this.a22 = this.a33 = 1; 
+        this.a12 = this.a13 = this.a21 = this.a23 = this.a31 = this.a32 = 0;
+        return this;
+    };
+
+    /**
+     * checks wether matrix is an identity matrix
+     * @return {Boolean} 
+     */
+    Matrix.prototype.isIdentity = function() {
+        return  this.a11 === 1 &amp;&amp; this.a12 === 0 &amp;&amp; this.a13 === 0 &amp;&amp;
+                this.a21 === 0 &amp;&amp; this.a22 === 1 &amp;&amp; this.a23 === 0;
+    };
+
+    /**
+     * returns matrix as a nicely formatted string
+     * @return {String}
+     */
+    Matrix.prototype.print = function() {
+        return  &#x27;matrix&#x27; + &#x27;\n&#x27; +
+                this.a11 + &#x27; &#x27; + this.a12 + &#x27; &#x27; + this.a13 + &#x27;\n&#x27; +  
+                this.a21 + &#x27; &#x27; + this.a22 + &#x27; &#x27; + this.a23 + &#x27;\n&#x27; + 
+                &#x27;0&#x27;      + &#x27; &#x27; + &#x27;0&#x27;      + &#x27; &#x27; + &#x27;1&#x27;      + &#x27;\n&#x27;;
+    };
+
+    return Matrix;
+
+});
+
+herman.namespace(&#x27;math.Vector&#x27;, function() {
+    &quot;use strict&quot;;
 
     /**
      * Vector
@@ -347,23 +400,64 @@ herman.namespace(&#x27;Vector&#x27;,function(){
     function Vector(x, y) {
         this.x = x;
         this.y = y;
+        return this;
     }
 
-    Vector.prototype = {
-        
-        add: function(x,y ) {
-            this.x += x;
-            this.y += y;
-        }
-        
+    /**
+     * [add description]
+     * @param {[type]} vec [description]
+     */
+    Vector.prototype.add  = function(vec) {
+        this.x += vec.x;
+        this.y += vec.y;
+        return this;
+    };
+
+    /**
+     * [substract description]
+     * @param  {[type]} vec [description]
+     * @return {[type]}     [description]
+     */
+    Vector.prototype.substract = function(vec) {
+        this.x -= vec.x;
+        this.y -= vec.y;
+        return this;
+    };
+
+    /**
+     * [normalize description]
+     * @return {[type]} [description]
+     */
+    Vector.prototype.normalize = function() {
+        var length = this.length();
+        this.x /= length;
+        this.y /= length;
+        return this;
+    };
+
+    /**
+     * [dot description]
+     * @param  {[type]} vec [description]
+     * @return {[type]}     [description]
+     */
+    Vector.prototype.dot = function(vec) {
+        return this.x * vec.x + this.y * vec.y;
+    };
+    
+    /**
+     * [length description]
+     * @return {[type]} [description]
+     */
+    Vector.prototype.length = function() {
+        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     };
 
     return Vector;
 
 });
 
-herman.namespace(&#x27;Tween&#x27;,function(){
-    &quot;use strict&quot;
+herman.namespace(&#x27;Tween&#x27;, function() {
+    &quot;use strict&quot;;
 
     /**
      * flash like tweening object
@@ -422,7 +516,9 @@ herman.namespace(&#x27;Tween&#x27;,function(){
                 if (progress &lt; 1) {
                     requestID = window.requestAnimationFrame(update); 
                 } else {
-                    done &amp;&amp; done();
+                    if(done) {
+                        done();    
+                    } 
                     window.cancelAnimationFrame(requestID);      
                 }
 
@@ -434,7 +530,7 @@ herman.namespace(&#x27;Tween&#x27;,function(){
         };
 
         tween.clone = function() {
-            return new Tween(target, property, duration);
+            return new Tween(target, properties, duration);
         };
 
         tween.done = function(callback) {
@@ -451,199 +547,200 @@ herman.namespace(&#x27;Tween&#x27;,function(){
 
 // herman.namespace(&quot;DomNode&quot;,function(){
 
-// 	/**
-// 	 * Dom Node
-// 	 * @param {HTMLDivElement} element
-// 	 */
-// 	function DomNode(element) {
-// 		herman.Node.call(this); 
-		
-// 		if(!element) {
-// 			// dev style
-// 			this.element = document.createElement(&quot;div&quot;);
-// 			this.element.className = &quot;div-node&quot;;
-// 			this.element.style.width = &#x27;100px&#x27;;
-// 			this.element.style.height = &#x27;100px&#x27;;
-// 			this.element.style.backgroundColor = &#x27;white&#x27;;
-// 			this.element.style.border = &#x27;1px solid red&#x27;;
-	
-// 		} else {
-// 			this.element = element;
-// 		}	
+//  /**
+//   * Dom Node
+//   * @param {HTMLDivElement} element
+//   */
+//  function DomNode(element) {
+//      herman.Node.call(this); 
+        
+//      if(!element) {
+//          // dev style
+//          this.element = document.createElement(&quot;div&quot;);
+//          this.element.className = &quot;div-node&quot;;
+//          this.element.style.width = &#x27;100px&#x27;;
+//          this.element.style.height = &#x27;100px&#x27;;
+//          this.element.style.backgroundColor = &#x27;white&#x27;;
+//          this.element.style.border = &#x27;1px solid red&#x27;;
+    
+//      } else {
+//          this.element = element;
+//      }   
 
-// 		// force gpu rendering
-// 		this.element.style.webkitPerspective = 1000;
-// 		this.element.style.webkitBackfaceVisibility = &quot;hidden&quot;;
-// 		// node styles
-// 		this.element.style.position = &quot;absolute&quot;;
-// 	}
+//      // force gpu rendering
+//      this.element.style.webkitPerspective = 1000;
+//      this.element.style.webkitBackfaceVisibility = &quot;hidden&quot;;
+//      // node styles
+//      this.element.style.position = &quot;absolute&quot;;
+//  }
 
 // // proto
-// 	var _p = herman.inherits(DomNode, herman.Node);
+//  var _p = herman.inherits(DomNode, herman.Node);
 
-// 	_p.update = function() {
-// 		var matrix = this.getMatrix();
+//  _p.update = function() {
+//      var matrix = this.getMatrix();
 
-// 		// TODO cross browser
-// 		this.element.style.webkitTransform = &#x27;matrix(&#x27; + matrix.a11 + &#x27;,&#x27; + matrix.a21 + &#x27;,&#x27; + matrix.a12 + &#x27;,&#x27; + matrix.a22 + &#x27;,&#x27; + matrix.a13 + &#x27;,&#x27; + matrix.a23 + &#x27;)&#x27;;	
-		
-// 		// update children
-// 		for (var i = 0; i &lt; this.children.length; i++) {
-// 			this.children[i].update();
-// 		}
-// 	}
+//      // TODO cross browser
+//      this.element.style.webkitTransform = &#x27;matrix(&#x27; + matrix.a11 + &#x27;,&#x27; + matrix.a21 + &#x27;,&#x27; + matrix.a12 + &#x27;,&#x27; + matrix.a22 + &#x27;,&#x27; + matrix.a13 + &#x27;,&#x27; + matrix.a23 + &#x27;)&#x27;;   
+        
+//      // update children
+//      for (var i = 0; i &lt; this.children.length; i++) {
+//          this.children[i].update();
+//      }
+//  }
 
 // // scene
-// 	_p.addChild = function(child) {
-		
-// 		this.super.addChild.apply(this,arguments); // super
-// 		child.update();
-// 		//TODO use stage reference
-// 		document.getElementById(&#x27;domStage&#x27;).appendChild(child.element);
-// 	};
+//  _p.addChild = function(child) {
+        
+//      this.super.addChild.apply(this,arguments); // super
+//      child.update();
+//      //TODO use stage reference
+//      document.getElementById(&#x27;domStage&#x27;).appendChild(child.element);
+//  };
 
-// 	_p.removeChild = function(child) {
-// 		this.super.removeChild.apply(this,arguments); // super
-// 		//TODO use stage reference
-// 		document.getElementById(&#x27;domStage&#x27;).removeChild(child.element);
-// 	};
+//  _p.removeChild = function(child) {
+//      this.super.removeChild.apply(this,arguments); // super
+//      //TODO use stage reference
+//      document.getElementById(&#x27;domStage&#x27;).removeChild(child.element);
+//  };
 
-// 	return DomNode;
+//  return DomNode;
 
 // });
 
 
-herman.namespace(&#x27;Node&#x27;,function(){
-	&quot;use strict&quot;
+herman.namespace(&#x27;Node&#x27;, function() {
+    &quot;use strict&quot;;
 
-	/**
-	 * Node
-	 * 
-	 * @class Node
-	 * @constructor
-	 */
-	function Node() {
-		this.tag = undefined;
-		this.stage = undefined;
-		this.parent = undefined;
-		this.children = [];
-		this.matrix = new herman.Matrix(); // calculate on the fly
-		this.x = 0;
-		this.y = 0;
-		this.scale = 1;
-		this.rotation = 0; 
-		// anchor 0-1 or px
-		this.anchorX = 0;
-		this.anchorY = 0;
-		// w/h
-		this.width = 0;
-		this.height = 0;
-	}
+    /**
+     * Node
+     * 
+     * @class Node
+     * @constructor
+     */
+    function Node() {
+        this.tag = undefined;
+        this.stage = undefined;
+        this.parent = undefined;
+        this.children = [];
+        this.matrix = new herman.math.Matrix(); // calculate on the fly
+        this.x = 0;
+        this.y = 0;
+        this.scale = 1;
+        this.rotation = 0; 
+        // anchor 0-1 or px
+        this.anchorX = 0;
+        this.anchorY = 0;
+        // w/h
+        this.width = 0;
+        this.height = 0;
+    }
 
-// prototype
-	Node.prototype = {
+    /**
+     * [update description]
+     * @param  {[type]} context [description]
+     * @return {[type]}         [description]
+     */
+    Node.prototype.update = function(context) {        
+        // update children
+        this.children.forEach(function(element){
+            element.update(context);
+        });
+    };
 
-		update : function(context) {        
-	        // update children
-	        this.children.forEach(function(element){
-	            element.update(context);
-	        });
-	    },
+// transform
+        
+    /**
+     * get world matrix
+     * @return {herman.Matrix} 
+     */
+    Node.prototype.getMatrix = function() { 
+        //this.matrix.identity(); // clear      
+        this.matrix = new herman.math.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
 
-	// transform
-		
-		/**
-		 * get world matrix
-		 * @return {herman.Matrix} 
-		 */
-		getMatrix : function() {	
-			//this.matrix.identity(); // clear		
-			this.matrix = new herman.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+        if (this.parent) {
+            this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
+        } 
+        return this.matrix;
+    };
 
-			if (this.parent) {
-				this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
-			} 
-			return this.matrix;
-		},
+    Node.prototype.localToGlobal = function(x, y) {
+        var mat = this.getMatrix();
+        mat.translate(x, y);
+        return new herman.math.Vector(mat.a13, mat.a23);
 
-		localToGlobal : function(x, y) {
-			var mat = this.getMatrix();
-			mat.translate(x, y);
-			return new herman.Vector(mat.a13, mat.a23);
+    };
 
-		},
+    Node.prototype.globalToLocal = function(x, y) {
+        // get mat, invert mat, append x,y
+        var mat = this.getMatrix();
+        return new herman.math.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -&gt; 10, 10
+    };
 
-		globalToLocal : function(x, y) {
-			// get mat, invert mat, append x,y
-			var mat = this.getMatrix();
-			return new herman.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -&gt; 10, 10
-		},
+// scene graph
+            
+    Node.prototype.addChild = function(child) {
+        this.addChildAt(child, this.children.length);
+    };
 
-	// scene graph
-			
-		addChild : function(child) {
-			this.addChildAt(child, this.children.length);
-		},
+    Node.prototype.addChildAt = function(child, index) {
+        if(index &lt; 0 || index &gt; this.children.length) {
+            console.log(&#x27;index out of bounds&#x27;);
+            return;
+        }
+        if(child instanceof Node &amp;&amp; !this.hasChild(child)) {
+            if(child.parent) { 
+                child.parent.removeChild(child);
+            }
+            this.children.splice(index, 0, child);
+            child.parent = this;    
+        }
+    };
 
-		addChildAt : function(child, index) {
-			if(index &lt; 0 || index &gt; this.children.length) {
-				console.log(&#x27;index out of bounds&#x27;);
-				return;
-			}
-			if(child instanceof Node &amp;&amp; !this.hasChild(child)) {
-				if(child.parent) { 
-					child.parent.removeChild(child);
-				}
-				this.children.splice(index, 0, child);
-				child.parent = this;	
-			}
-		},
+    Node.prototype.removeChild = function(child) {
+        if(child instanceof Node &amp;&amp; this.hasChild(child)) {
+            this.removeChildAt(this.children.indexOf(child));
+        }
+    };
 
-		removeChild : function(child) {
-			if(child instanceof Node &amp;&amp; this.hasChild(child)) {
-				this.removeChildAt(this.children.indexOf(child));
-			}
-		},
+    Node.prototype.removeChildAt = function(index) {
+        if(index &lt; 0 || index &gt;= this.children.length) {
+            console.log(&#x27;index out of bounds&#x27;);
+            return;
+        }
+        this.children[index].parent = null;
+        this.children.splice(index, 1);
+    };
 
-		removeChildAt : function(index) {
-			if(index &lt; 0 || index &gt;= this.children.length) {
-				console.log(&#x27;index out of bounds&#x27;);
-				return;
-			}
-			this.children[index].parent = null;
-			this.children.splice(index, 1);
-		},
+    Node.prototype.hasChild = function(child) {
+        return this.children.indexOf(child) !== -1;
+    };
 
-		hasChild : function(child) {
-			return this.children.indexOf(child) !== -1;
-		},
+    Node.prototype.getChildren = function() {
+        return this.children;
+    };
 
-		getChildren : function() {
-			return this.children;
-		},
+    Node.prototype.getChild = function(child) {
+        var index = this.children.indexOf(child);
+        return (index !== -1) ? this.children[index] : undefined;
+    };
 
-		getChild : function(child) {
-			var index = this.children.indexOf(child);
-			return (index !== -1) ? this.children[index] : undefined;
-		},
-
-		getChildAt : function(index) {
-			if(index &lt; 0 || index &gt;= this.children.length) {
-				console.log(&#x27;index out of bounds&#x27;);
-				return;
-			}
-			return this.children[index];
-		}
-
-	};
+    Node.prototype.getChildAt = function(index) {
+        if(index &lt; 0 || index &gt;= this.children.length) {
+            console.log(&#x27;index out of bounds&#x27;);
+            return;
+        }
+        return this.children[index];
+    };
 
 // expose
-	return Node;
+    return Node;
 
 });
 
-herman.namespace(&quot;Sprite&quot;,function(){
-
+herman.namespace(&quot;Sprite&quot;, function() {
+    &quot;use strict&quot;;
+    
     /**
      * Canvas Node
      * @constructor
@@ -663,7 +760,7 @@ herman.namespace(&quot;Sprite&quot;,function(){
         context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
         context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
         context.restore();
-    }
+    };
 
     _p.update = function(context) {
         this.draw(context);
@@ -672,15 +769,16 @@ herman.namespace(&quot;Sprite&quot;,function(){
         this.children.forEach(function(element){
             element.update(context);
         });
-    }
+    };
 
     return Sprite;
 
 });
 
 
-herman.namespace(&quot;Text&quot;,function(){
-
+herman.namespace(&quot;Text&quot;, function() {
+    &quot;use strict&quot;;
+    
     /**
      * Text Node
      * @constructor

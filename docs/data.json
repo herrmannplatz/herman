@@ -2,7 +2,7 @@
     "project": {
         "name": "herman",
         "description": "",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "url": ""
     },
     "files": {
@@ -33,7 +33,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "build/herman.js",
-            "line": 425,
+            "line": 521,
             "type": "{[type]}"
         }
     },
@@ -49,7 +49,7 @@
             "module": "herman",
             "namespace": "",
             "file": "build/herman.js",
-            "line": 111,
+            "line": 128,
             "description": "3x3 Matrix",
             "is_constructor": 1
         },
@@ -64,7 +64,7 @@
             "module": "herman",
             "namespace": "",
             "file": "build/herman.js",
-            "line": 248,
+            "line": 301,
             "description": "Vector",
             "is_constructor": 1
         },
@@ -79,7 +79,7 @@
             "module": "herman",
             "namespace": "",
             "file": "build/herman.js",
-            "line": 425,
+            "line": 521,
             "description": "Node",
             "is_constructor": 1
         }
@@ -162,7 +162,41 @@
         },
         {
             "file": "build/herman.js",
-            "line": 128,
+            "line": 102,
+            "description": "[angleBetweenPoints description]",
+            "params": [
+                {
+                    "name": "p1",
+                    "description": "[description]",
+                    "type": "[type]"
+                },
+                {
+                    "name": "p2",
+                    "description": "[description]",
+                    "type": "[type]"
+                }
+            ],
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 110,
+            "description": "[intersect description]",
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 138,
             "description": "[translate description]",
             "params": [
                 {
@@ -185,8 +219,8 @@
         },
         {
             "file": "build/herman.js",
-            "line": 140,
-            "description": "[rotate description]",
+            "line": 150,
+            "description": "[rotate description]j",
             "params": [
                 {
                     "name": "angle",
@@ -203,7 +237,7 @@
         },
         {
             "file": "build/herman.js",
-            "line": 159,
+            "line": 169,
             "description": "[scale description]",
             "params": [
                 {
@@ -221,14 +255,14 @@
         },
         {
             "file": "build/herman.js",
-            "line": 172,
+            "line": 182,
             "description": "[transform description]",
             "class": "Matrix",
             "module": "herman"
         },
         {
             "file": "build/herman.js",
-            "line": 179,
+            "line": 189,
             "description": "[multiply description]",
             "params": [
                 {
@@ -242,17 +276,39 @@
                 "type": "Matrix"
             },
             "example": [
-                "\n\n\t\t\t\t\t| m.a11 m.a12 m.a13 |\n    \t\t\t\t| m.a21 m.a22 m.a23 |\n        \t\t\t| m.a31 m.a32 m.a33 |\n| a11 a12 a13 |\n| a21 a22 a23 |\n| a31 a32 a33 |\n"
+                "\n\n                 | m.a11 m.a12 m.a13 |\n                 | m.a21 m.a22 m.a23 |\n                 | m.a31 m.a32 m.a33 |\n| a11 a12 a13 |\n| a21 a22 a23 |\n| a31 a32 a33 |\n"
             ],
             "class": "Matrix",
             "module": "herman"
         },
         {
             "file": "build/herman.js",
-            "line": 214,
-            "description": "[identity description]",
+            "line": 220,
+            "description": "[invert description]\n\n| |a22 a23| |a13 a12| |a12 a13| |\n| |a32 a33| |a33 a32| |a22 a23| |\n|                               |    \n| |a23 a21| |a11 a13| |a13 a11| |\n| |a33 a31| |a31 a33| |a23 a21| |\n|                               |\n| |a21 a22| |a12 a11| |a11 a12| |\n| |a31 a32| |a32 a31| |a21 a22| |",
             "return": {
                 "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 250,
+            "description": "[determinant description]\n\n| a11 a12 a13 | a11 a12\n| a21 a22 a23 | a21 a22\n| a31 a32 a33 | a31 a32",
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 264,
+            "description": "[identity description]",
+            "return": {
+                "description": "",
                 "type": "Matrix"
             },
             "class": "Matrix",
@@ -260,8 +316,19 @@
         },
         {
             "file": "build/herman.js",
-            "line": 228,
-            "description": "[toString description]",
+            "line": 274,
+            "description": "checks wether matrix is an identity matrix",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 283,
+            "description": "returns matrix as a nicely formatted string",
             "return": {
                 "description": "",
                 "type": "String"
@@ -271,7 +338,79 @@
         },
         {
             "file": "build/herman.js",
-            "line": 274,
+            "line": 312,
+            "description": "[add description]",
+            "params": [
+                {
+                    "name": "vec",
+                    "description": "[description]",
+                    "type": "[type]"
+                }
+            ],
+            "class": "Vector",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 322,
+            "description": "[substract description]",
+            "params": [
+                {
+                    "name": "vec",
+                    "description": "[description]",
+                    "type": "[type]"
+                }
+            ],
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Vector",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 333,
+            "description": "[normalize description]",
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Vector",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 344,
+            "description": "[dot description]",
+            "params": [
+                {
+                    "name": "vec",
+                    "description": "[description]",
+                    "type": "[type]"
+                }
+            ],
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Vector",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 353,
+            "description": "[length description]",
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Vector",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 368,
             "description": "flash like tweening object",
             "example": [
                 "\nvar tween = new Tween(node, { x : 100 }, 1000);\ntween.done = function() { console.log('tweening finished') }\ntween.start();"
@@ -298,7 +437,25 @@
         },
         {
             "file": "build/herman.js",
-            "line": 461,
+            "line": 545,
+            "description": "[update description]",
+            "params": [
+                {
+                    "name": "context",
+                    "description": "[description]",
+                    "type": "[type]"
+                }
+            ],
+            "return": {
+                "description": "[description]",
+                "type": "[type]"
+            },
+            "class": "Node",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 559,
             "description": "get world matrix",
             "return": {
                 "description": "",
@@ -309,7 +466,7 @@
         },
         {
             "file": "build/herman.js",
-            "line": 553,
+            "line": 650,
             "description": "Canvas Node",
             "is_constructor": 1,
             "class": "Node",
@@ -317,7 +474,7 @@
         },
         {
             "file": "build/herman.js",
-            "line": 590,
+            "line": 688,
             "description": "Text Node",
             "is_constructor": 1,
             "class": "Node",
@@ -342,48 +499,92 @@
             "line": " build/herman.js:97"
         },
         {
-            "message": "Missing item type\n[translate description]",
-            "line": " build/herman.js:128"
+            "message": "Missing item type\n[angleBetweenPoints description]",
+            "line": " build/herman.js:102"
         },
         {
-            "message": "Missing item type\n[rotate description]",
-            "line": " build/herman.js:140"
+            "message": "Missing item type\n[intersect description]",
+            "line": " build/herman.js:110"
+        },
+        {
+            "message": "Missing item type\n[translate description]",
+            "line": " build/herman.js:138"
+        },
+        {
+            "message": "Missing item type\n[rotate description]j",
+            "line": " build/herman.js:150"
         },
         {
             "message": "Missing item type\n[scale description]",
-            "line": " build/herman.js:159"
+            "line": " build/herman.js:169"
         },
         {
             "message": "Missing item type\n[transform description]",
-            "line": " build/herman.js:172"
+            "line": " build/herman.js:182"
         },
         {
             "message": "Missing item type\n[multiply description]",
-            "line": " build/herman.js:179"
+            "line": " build/herman.js:189"
+        },
+        {
+            "message": "Missing item type\n[invert description]\n\n| |a22 a23| |a13 a12| |a12 a13| |\n| |a32 a33| |a33 a32| |a22 a23| |\n|                               |    \n| |a23 a21| |a11 a13| |a13 a11| |\n| |a33 a31| |a31 a33| |a23 a21| |\n|                               |\n| |a21 a22| |a12 a11| |a11 a12| |\n| |a31 a32| |a32 a31| |a21 a22| |",
+            "line": " build/herman.js:220"
+        },
+        {
+            "message": "Missing item type\n[determinant description]\n\n| a11 a12 a13 | a11 a12\n| a21 a22 a23 | a21 a22\n| a31 a32 a33 | a31 a32",
+            "line": " build/herman.js:250"
         },
         {
             "message": "Missing item type\n[identity description]",
-            "line": " build/herman.js:214"
+            "line": " build/herman.js:264"
         },
         {
-            "message": "Missing item type\n[toString description]",
-            "line": " build/herman.js:228"
-        },
-        {
-            "message": "Missing item type\nflash like tweening object",
+            "message": "Missing item type\nchecks wether matrix is an identity matrix",
             "line": " build/herman.js:274"
         },
         {
+            "message": "Missing item type\nreturns matrix as a nicely formatted string",
+            "line": " build/herman.js:283"
+        },
+        {
+            "message": "Missing item type\n[add description]",
+            "line": " build/herman.js:312"
+        },
+        {
+            "message": "Missing item type\n[substract description]",
+            "line": " build/herman.js:322"
+        },
+        {
+            "message": "Missing item type\n[normalize description]",
+            "line": " build/herman.js:333"
+        },
+        {
+            "message": "Missing item type\n[dot description]",
+            "line": " build/herman.js:344"
+        },
+        {
+            "message": "Missing item type\n[length description]",
+            "line": " build/herman.js:353"
+        },
+        {
+            "message": "Missing item type\nflash like tweening object",
+            "line": " build/herman.js:368"
+        },
+        {
+            "message": "Missing item type\n[update description]",
+            "line": " build/herman.js:545"
+        },
+        {
             "message": "Missing item type\nget world matrix",
-            "line": " build/herman.js:461"
+            "line": " build/herman.js:559"
         },
         {
             "message": "Missing item type\nCanvas Node",
-            "line": " build/herman.js:553"
+            "line": " build/herman.js:650"
         },
         {
             "message": "Missing item type\nText Node",
-            "line": " build/herman.js:590"
+            "line": " build/herman.js:688"
         }
     ]
 }

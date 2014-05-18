@@ -1,6 +1,6 @@
 
-herman.namespace('math.Utils',function(){
-    "use strict"
+herman.namespace('math.Utils', function() {
+    "use strict";
 
     var Utils = {
 
@@ -21,7 +21,7 @@ herman.namespace('math.Utils',function(){
          * [intersect description]
          * @return {[type]} [description]
          */
-        intersect : function() {l1, l2}
+        intersect : function(l1, l2) {}
     };
 
     return Utils;

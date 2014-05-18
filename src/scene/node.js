@@ -1,6 +1,6 @@
 
-herman.namespace('Node', function(){
-    "use strict"
+herman.namespace('Node', function() {
+    "use strict";
 
     /**
      * Node

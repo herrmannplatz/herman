@@ -5,12 +5,16 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    jshint: {
+      all: ['src/**/*.js']
+    },
+
     concat: {
        dist: {
         src: ['src/herman.js','src/render/*.js','src/math/*.js','src/tween/*.js','src/scene/*.js'],
         dest: 'build/<%= pkg.name %>.js'
       }
-    },
+    },    
 
     yuidoc: {
       compile: {
@@ -39,6 +43,7 @@ module.exports = function(grunt) {
       pivotal: {
         src: 'build/<%= pkg.name %>.js',
         options: {
+          display: 'full',
           specs: 'spec/*Spec.js',
           helpers: 'spec/*Helper.js'
         }
@@ -52,9 +57,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
 
   // tasks
   grunt.registerTask('default', ['concat','jasmine']);
-  grunt.registerTask('deploy', ['concat','yuidoc','uglify','jasmine']);
+  grunt.registerTask('deploy', ['jshint','concat','yuidoc','uglify','jasmine']);
 
 };
