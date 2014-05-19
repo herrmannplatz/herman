@@ -25,10 +25,6 @@ herman.namespace("Text", function() {
         context.restore();
     };
 
-    _p.update = function(context) {
-        this.draw(context);
-    };
-
     return Text;
 
 });

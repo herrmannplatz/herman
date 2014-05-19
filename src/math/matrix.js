@@ -6,7 +6,7 @@ herman.namespace('math.Matrix', function() {
      * [PRECISION description]
      * @type {Number}
      */
-    var PRECISION = 15;
+    var PRECISION = 5;
 
     /**
      * 3x3 Matrix
@@ -116,7 +116,19 @@ herman.namespace('math.Matrix', function() {
      * 
      */
     Matrix.prototype.preMultiply = function(m) {
-        //TODO    
+        var a11 = m.a11;
+        var a12 = m.a12; 
+        var a21 = m.a21;
+        var a22 = m.a22;
+
+        this.a11 = (a11*this.a11) + (a12*this.a21);
+        this.a12 = (a11*this.a12) + (a12*this.a22); 
+        this.a13 = (a11*this.a13) + (a12*this.a23) + m.a13; 
+
+        this.a21 = (a21*this.a11) + (a22*this.a21);
+        this.a22 = (a21*this.a12) + (a22*this.a22);
+        this.a23 = (a21*this.a13) + (a22*this.a23) + m.a23;
+        return this;    
     };
 
     /**
@@ -160,7 +172,6 @@ herman.namespace('math.Matrix', function() {
      */
     Matrix.prototype.determinant = function() {
         return this.a11 * this.a22 - this.a21 * this.a12;
-
     };
 
     /**

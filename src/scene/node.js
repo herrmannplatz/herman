@@ -64,8 +64,7 @@ herman.namespace('Node', function() {
         );
 
         if(this.parent) {
-            var parentWorldMatrix = this.parent.matrix.clone();
-            this.matrix = parentWorldMatrix.multiply(this.matrix);    
+            this.matrix.preMultiply(this.parent.matrix);    
         } 
     };
 

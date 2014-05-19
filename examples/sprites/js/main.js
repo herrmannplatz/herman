@@ -23,16 +23,20 @@ function init() {
 	image.src = "img/kugelfisch.png";
 
 	function initScene() {
+		var container = document.getElementById('container')
 		var canvas = document.getElementById('canvas');
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.width = container.offsetWidth;
+		canvas.height = container.offsetHeight;
 
 		var renderer = new herman.Renderer(canvas);
 
 		var stage = new herman.Node();
 		var nodes = [];
+
+		var counter = 0;
+		var i;
 		
-		for( var i = 0; i < FISH_COUNT; i++ ) {				
+		for( i = 0; i < FISH_COUNT; i++ ) {				
 			
 			var node = new herman.Sprite(image);
 			node.width = image.width;
@@ -45,8 +49,6 @@ function init() {
 		}	
 
 		// spinning
-		var counter = 0;
-		var i;
 		function update() {
 			stats.begin();
 			for( i = 0; i < nodes.length; i++ ) {
