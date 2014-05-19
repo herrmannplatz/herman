@@ -1,9 +1,11 @@
 
 herman.namespace('math.Matrix', function() {
     "use strict";
-
-    //TODO: scaleX, scaleY or scaleNonUniform
-
+    
+    /**
+     * [PRECISION description]
+     * @type {Number}
+     */
     var PRECISION = 15;
 
     /**
@@ -99,6 +101,25 @@ herman.namespace('math.Matrix', function() {
     };
 
     /**
+     * [preMultiply description]
+     * @param  {Matrix} m
+     * @return {Matrix}
+     *
+     * @example
+     *
+     *                      | a11 a12 a13 |
+     *                      | a21 a22 a23 |
+     *                      | a31 a32 a33 |
+     * | m.a11 m.a12 m.a13 |
+     * | m.a21 m.a22 m.a23 |
+     * | m.a31 m.a32 m.a33 |
+     * 
+     */
+    Matrix.prototype.preMultiply = function(m) {
+        //TODO    
+    };
+
+    /**
      * [invert description]
      *
      * | |a22 a23| |a13 a12| |a12 a13| |
@@ -162,6 +183,21 @@ herman.namespace('math.Matrix', function() {
     };
 
     /**
+     * [clone description]
+     * @return {herman.math.Matrix} [description]
+     */
+    Matrix.prototype.clone = function() {
+        var m = new Matrix();
+        m.a11 = this.a11;
+        m.a12 = this.a12;
+        m.a13 = this.a13;
+        m.a21 = this.a21;
+        m.a22 = this.a22;
+        m.a23 = this.a23;
+        return m;
+    };
+
+    /**
      * returns matrix as a nicely formatted string
      * @return {String}
      */
@@ -169,7 +205,7 @@ herman.namespace('math.Matrix', function() {
         return  'matrix' + '\n' +
                 this.a11 + ' ' + this.a12 + ' ' + this.a13 + '\n' +  
                 this.a21 + ' ' + this.a22 + ' ' + this.a23 + '\n' + 
-                '0'      + ' ' + '0'      + ' ' + '1'      + '\n';
+                this.a31 + ' ' + this.a32 + ' ' + this.a33 + '\n';
     };
 
     return Matrix;

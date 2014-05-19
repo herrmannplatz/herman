@@ -3,7 +3,7 @@ herman.namespace('Renderer', function() {
     "use strict";  
 
     /**
-     * 
+     * TODO: init with config
      * @param {HTMLCanvasElement} canvas 
      */
     function Renderer(canvas) {

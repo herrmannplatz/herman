@@ -96,6 +96,8 @@ describe('herman Node', function() {
         c.x = -50;
         c.y = -50;
 
+        n1.update();
+
         var p = c.localToGlobal(0,0);
         expect(p.x).toEqual(50);
         expect(p.y).toEqual(50);
@@ -116,6 +118,8 @@ describe('herman Node', function() {
         c.x = -50;
         c.y = -50;
 
+        n1.update();
+            
         var p = c.globalToLocal(200,200);
         expect(p.x).toEqual(150);
         expect(p.y).toEqual(150);

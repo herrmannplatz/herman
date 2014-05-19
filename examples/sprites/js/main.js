@@ -46,9 +46,10 @@ function init() {
 
 		// spinning
 		var counter = 0;
+		var i;
 		function update() {
 			stats.begin();
-			for( var i = 0; i < nodes.length; i++ ) {
+			for( i = 0; i < nodes.length; i++ ) {
 				nodes[i].rotation = (counter++/1000)%360;
 			}
 			renderer.update(stage);		
