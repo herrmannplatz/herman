@@ -23,31 +23,26 @@ function init() {
 	image.src = "img/kugelfisch.png";
 
 	function initScene() {
-		var container = document.getElementById('container')
-		var canvas = document.getElementById('canvas');
-		canvas.width = container.offsetWidth;
-		canvas.height = container.offsetHeight;
-
-		var renderer = new herman.Renderer(canvas);
-
-		var stage = new herman.Node();
 		var nodes = [];
-
+		var stage = new herman.DomNode();
 		var counter = 0;
-		var i;
 		
-		for( i = 0; i < FISH_COUNT; i++ ) {					
-			var node = new herman.Sprite(image);
-			node.width = image.width;
-			node.height = image.height;
-			node.x = Math.random() * canvas.width;
-			node.y = Math.random() * canvas.height;
-			node.tag = "node" + i;
+		for( i = 0; i < FISH_COUNT; i++ ) {	
+			var fish = new Image();
+			fish.src = image.src;							
+			var node = new herman.DomNode(fish);
+			node.width = fish.width;
+			node.height = fish.height;
+			node.x = Math.random() * window.innerWidth;
+			node.y = Math.random() * window.innerHeight;
 			stage.addChild(node);	
 			nodes.push(node);
-		}	
+		}
 
-		var frameStart;
+		window.context = {
+			save : function() {},
+			restore : function() {}
+		}
 
 		// spinning
 		function update() {
@@ -60,7 +55,7 @@ function init() {
 			for( i = 0, len = nodes.length; i < len; i++ ) {
 				nodes[i].rotation = rotation;
 			}
-			renderer.update(stage);	
+			stage.update(context);	
 
 			stats.end();
 		}

@@ -5,9 +5,14 @@ herman.namespace('math.Utils', function() {
     var Utils = {
 
         /**
-         * Degrees to radians helper
+         * Degrees to radians
          */
         DEG_TO_RAD : Math.PI/180,
+
+        /**
+         * Radians to degrees
+         */
+        RAD_TO_DEG : 180/Math.PI,
 
         /**
          * [angleBetweenPoints description]

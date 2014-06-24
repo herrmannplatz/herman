@@ -1,12 +1,45 @@
 
 herman.namespace('math.Matrix', function() {
     "use strict";
-    
+
+// private 
+
     /**
      * [PRECISION description]
      * @type {Number}
      */
-    var PRECISION = 5;
+    var PRECISION = 15;
+
+    /**
+     * [multiply description]
+     *
+     *                          | m2.a11 m2.a12 m2.a13 |
+     *                          | m2.a21 m2.a22 m2.a23 |
+     *                          | m2.a31 m2.a32 m2.a33 |
+     * | m1.a11 m1.a12 m1.a13 |
+     * | m1.a21 m1.a22 m1.a23 |
+     * | m1.a31 m1.a32 m1.a33 |
+     * 
+     * @param  {[type]} m1 [description]
+     * @param  {[type]} m2 [description]
+     * @return {[type]}    [description]
+     */
+    var multiply = function(m1, m2) {
+        var a11 = m1.a11;
+        var a12 = m1.a12; 
+        var a21 = m1.a21;
+        var a22 = m1.a22;
+
+        m1.a11 = (a11*m2.a11) + (a12*m2.a21);
+        m1.a12 = (a11*m2.a12) + (a12*m2.a22); 
+        m1.a13 = (a11*m2.a13) + (a12*m2.a23) + m1.a13; 
+
+        m1.a21 = (a21*m2.a11) + (a22*m2.a21);
+        m1.a22 = (a21*m2.a12) + (a22*m2.a22);
+        m1.a23 = (a21*m2.a13) + (a22*m2.a23) + m1.a23;
+    }; 
+
+// public
 
     /**
      * 3x3 Matrix
@@ -25,8 +58,8 @@ herman.namespace('math.Matrix', function() {
      * @return {Matrix}
      */
     Matrix.prototype.translate = function(tx, ty) {
-        this.a13 += tx; //Math.round(tx); // tx | 0;
-        this.a23 += ty; //Math.round(ty); // ty | 0;
+        this.a13 += tx;
+        this.a23 += ty; 
         return this;
     };
 
@@ -66,37 +99,16 @@ herman.namespace('math.Matrix', function() {
      * [transform description]
      */
     Matrix.prototype.transform = function(tx, ty, angle, scale) {
-        return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+        return this.translate(tx, ty).rotate(angle).scale(scale);
     };
 
     /**
      * [multiply description]
      * @param  {Matrix} m
      * @return {Matrix}
-     *
-     * @example
-     * 
-     *                  | m.a11 m.a12 m.a13 |
-     *                  | m.a21 m.a22 m.a23 |
-     *                  | m.a31 m.a32 m.a33 |
-     * | a11 a12 a13 |
-     * | a21 a22 a23 |
-     * | a31 a32 a33 |
-     * 
      */
     Matrix.prototype.multiply = function(m) {
-        var a11 = this.a11;
-        var a12 = this.a12; 
-        var a21 = this.a21;
-        var a22 = this.a22;
-
-        this.a11 = (a11*m.a11) + (a12*m.a21);
-        this.a12 = (a11*m.a12) + (a12*m.a22); 
-        this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
-
-        this.a21 = (a21*m.a11) + (a22*m.a21);
-        this.a22 = (a21*m.a12) + (a22*m.a22);
-        this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+        multiply(this,m);
         return this;
     };
 
@@ -104,30 +116,9 @@ herman.namespace('math.Matrix', function() {
      * [preMultiply description]
      * @param  {Matrix} m
      * @return {Matrix}
-     *
-     * @example
-     *
-     *                      | a11 a12 a13 |
-     *                      | a21 a22 a23 |
-     *                      | a31 a32 a33 |
-     * | m.a11 m.a12 m.a13 |
-     * | m.a21 m.a22 m.a23 |
-     * | m.a31 m.a32 m.a33 |
-     * 
      */
     Matrix.prototype.preMultiply = function(m) {
-        var a11 = m.a11;
-        var a12 = m.a12; 
-        var a21 = m.a21;
-        var a22 = m.a22;
-
-        this.a11 = (a11*this.a11) + (a12*this.a21);
-        this.a12 = (a11*this.a12) + (a12*this.a22); 
-        this.a13 = (a11*this.a13) + (a12*this.a23) + m.a13; 
-
-        this.a21 = (a21*this.a11) + (a22*this.a21);
-        this.a22 = (a21*this.a12) + (a22*this.a22);
-        this.a23 = (a21*this.a13) + (a22*this.a23) + m.a23;
+        multiply(m,this);
         return this;    
     };
 
@@ -191,6 +182,16 @@ herman.namespace('math.Matrix', function() {
     Matrix.prototype.isIdentity = function() {
         return  this.a11 === 1 && this.a12 === 0 && this.a13 === 0 &&
                 this.a21 === 0 && this.a22 === 1 && this.a23 === 0;
+    };
+
+    /**
+     * [decompose description]
+     * @return {[type]} [description]
+     */
+    Matrix.prototype.decompose = function() {
+        var decomposed = {};
+        decomposed.rotation = herman.math.Utils.RAD_TO_DEG * Math.atan2(this.a21,this.a11);
+        return decomposed;
     };
 
     /**

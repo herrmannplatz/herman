@@ -11,6 +11,20 @@ describe('herman Matrix', function() {
 
     });
 
+    describe('preMultiply', function() {
+
+        it('translated', function() {        
+            var m = new herman.math.Matrix();
+            m.translate(100,100);
+
+            var m1 = new herman.math.Matrix();
+            
+            expect(m.a13).toEqual(100);
+            expect(m.a23).toEqual(100);
+        }); 
+
+    });
+
     describe('inverse', function() {
 
         it('of an translated matrix', function() {        

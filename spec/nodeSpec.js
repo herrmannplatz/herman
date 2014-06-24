@@ -1,8 +1,14 @@
 describe('herman Node', function() {
 
+    var context;
+
+    beforeEach(function() {
+        context = jasmine.createSpyObj('context', ['save', 'restore', 'setTransform', 'draw']);
+    });
+
     describe('addChild', function() {
 
-        it('without children', function() {
+        it('node without children', function() {
             var n = new herman.Node();
             expect(n.getChildren().length).toEqual(0);
         });
@@ -26,6 +32,56 @@ describe('herman Node', function() {
             var p = new herman.Node();
             p.addChild({});
             expect(p.getChildren().length).toEqual(0);
+        });
+
+    });
+
+    describe('removeChild', function() {
+
+        it('remove child', function() {
+            var p = new herman.Node();
+            var c = new herman.Node();
+
+            p.addChild(c);
+            expect(p.hasChild(c)).toEqual(true);
+            expect(p.getChildren().length).toEqual(1);
+
+            p.removeChild(c);
+            expect(p.hasChild(c)).toEqual(false);
+            expect(p.getChildren().length).toEqual(0);
+            expect(c.parent).toEqual(null);
+        });
+
+        it('remove wrong child', function() {
+            var p = new herman.Node();
+            var c = new herman.Node();
+
+            function removeWrapper() {
+                p.removeChild(c);    
+            }
+
+            expect(removeWrapper).toThrow();
+        });
+
+    });
+
+    describe('positioning in scene graph', function() {
+
+        it('node without children', function() {
+            var root = new herman.Node();
+            var n = new herman.Node();
+            var c = new herman.Node();
+
+            n.x = 100;
+            n.y = 100;
+
+            root.addChild(n);
+            n.addChild(c);
+            root.update(context);
+
+            expect(c.matrix.a13).toEqual(100);
+            expect(c.matrix.a23).toEqual(100);
+            
         });
 
     });
@@ -55,33 +111,6 @@ describe('herman Node', function() {
         expect(n.getChildAt(0)).toEqual(c);
     });
 
-    it('removeChild', function() {
-
-        // remove child
-        var n = new herman.Node();
-        var c = new herman.Node();
-        n.addChild(c);
-        expect(n.hasChild(c)).toEqual(true);
-        expect(n.getChildren().length).toEqual(1);
-        n.removeChild(c);
-        expect(n.hasChild(c)).toEqual(false);
-        expect(n.getChildren().length).toEqual(0);
-        expect(c.parent).toEqual(null);
-
-        // wrong child
-        var n1 = new herman.Node();
-        var n2 = new herman.Node();
-        var c = new herman.Node();
-        n2.addChild(c);
-        n1.removeChild(c);
-        expect(n1.hasChild(c)).toEqual(false);
-        expect(n2.hasChild(c)).toEqual(true);
-        expect(n1.getChildren().length).toEqual(0);
-        expect(n2.getChildren().length).toEqual(1);
-        expect(c.parent).toEqual(n2);
-
-    });
-
     it('localToGlobal', function() {
         var n1 = new herman.Node();
         var n2 = new herman.Node();
@@ -96,7 +125,7 @@ describe('herman Node', function() {
         c.x = -50;
         c.y = -50;
 
-        n1.update();
+        n1.update(context);
 
         var p = c.localToGlobal(0,0);
         expect(p.x).toEqual(50);
@@ -118,7 +147,7 @@ describe('herman Node', function() {
         c.x = -50;
         c.y = -50;
 
-        n1.update();
+        n1.update(context);
             
         var p = c.globalToLocal(200,200);
         expect(p.x).toEqual(150);

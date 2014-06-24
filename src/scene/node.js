@@ -9,25 +9,77 @@ herman.namespace('Node', function() {
      * @constructor
      */
     function Node() {
+
+        /**
+         * [tag description]
+         * @type {[type]}
+         */
         this.tag = undefined;
-        this.stage = undefined;
+
+        /**
+         * parent node
+         * @type {[type]}
+         */
         this.parent = undefined;
+
+        /**
+         * child nodes
+         * @type {Array}
+         */
         this.children = [];
 
-        // world transform
+        /**
+         * world transform
+         * @type {herman}
+         */
         this.matrix = new herman.math.Matrix(); 
 
+        /**
+         * [x description]
+         * @type {Number}
+         */
         this.x = 0;
+
+        /**
+         * [y description]
+         * @type {Number}
+         */
         this.y = 0;
+
+        /**
+         * [scale description]
+         * @type {Number}
+         */
         this.scale = 1;
+
+        /**
+         * [rotation description]
+         * @type {Number}
+         */
         this.rotation = 0; 
 
-        // anchor 0-1 or px
+        /**
+         * [anchorX description]
+         * @type {Number}
+         */
         this.anchorX = 0;
+
+        /**
+         * [anchorY description]
+         * @type {Number}
+         */
         this.anchorY = 0;
 
-        // w/h
+        /**
+         * [width description]
+         * @type {Number}
+         */
         this.width = 0;
+
+        /**
+         * [height description]
+         * @type {Number}
+         */
         this.height = 0;
     }
 
@@ -37,11 +89,17 @@ herman.namespace('Node', function() {
      * @return {[type]}         [description]
      */
     Node.prototype.update = function(context) {  
-        this.updateMatrix(); 
-        this.draw(context);
-        this.children.forEach(function(element) {
-            element.update(context);
-        });
+
+        // update and draw
+        context.save();
+            this.updateMatrix(context); 
+            this.draw(context);    
+        context.restore();   
+
+        // udpate childs
+        for ( var i = 0, len = this.children.length; i < len; i++ ) {
+            this.children[i].update(context); 
+        } 
     };
 
     /**
@@ -49,13 +107,15 @@ herman.namespace('Node', function() {
      * @return {[type]} [description]
      */
     Node.prototype.draw = function(context) {
-        
+        // overwrite
     };
         
     /**
      * update world matrix
      */
-    Node.prototype.updateMatrix = function() {  
+    Node.prototype.updateMatrix = function(context) {  
+
+        // build local matrix
         this.matrix.identity().transform(
             this.x + this.anchorX,
             this.y + this.anchorY, 
@@ -63,9 +123,15 @@ herman.namespace('Node', function() {
             this.scale
         );
 
+        // apply world matrix 
+        // TODO check preMultiply
         if(this.parent) {
-            this.matrix.preMultiply(this.parent.matrix);    
+            var world = this.parent.matrix.clone();
+            this.matrix = world.multiply(this.matrix);    
         } 
+
+        // update context transform
+        context.setTransform(this.matrix.a11, this.matrix.a21, this.matrix.a12, this.matrix.a22, this.matrix.a13, this.matrix.a23); 
     };
 
     /**
@@ -107,8 +173,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.addChildAt = function(child, index) {
         if(index < 0 || index > this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         if(child instanceof Node && !this.hasChild(child)) {
             if(child.parent) { 
@@ -127,6 +192,8 @@ herman.namespace('Node', function() {
     Node.prototype.removeChild = function(child) {
         if(child instanceof Node && this.hasChild(child)) {
             this.removeChildAt(this.children.indexOf(child));
+        } else {
+            throw new Error('object is not a child');
         }
     };
 
@@ -137,8 +204,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.removeChildAt = function(index) {
         if(index < 0 || index >= this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         this.children[index].parent = null;
         this.children.splice(index, 1);
@@ -162,13 +228,12 @@ herman.namespace('Node', function() {
     };
 
     /**
-     * [getChild description]
-     * @param  {[type]} child [description]
-     * @return {[type]}       [description]
+     * [getChildByTagName description]
+     * @param  {[type]} name [description]
+     * @return {[type]}      [description]
      */
-    Node.prototype.getChild = function(child) {
-        var index = this.children.indexOf(child);
-        return (index !== -1) ? this.children[index] : undefined;
+    Node.prototype.getChildByTagName = function(name) {
+        // implement
     };
 
     /**
@@ -178,8 +243,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.getChildAt = function(index) {
         if(index < 0 || index >= this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         return this.children[index];
     };

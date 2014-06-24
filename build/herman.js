@@ -67,7 +67,16 @@ herman.namespace('Renderer', function() {
      */
     function Renderer(canvas) {
         this.canvas = canvas;
-        this.context = this.canvas.getContext("2d");  
+        this.context = this.canvas.getContext("2d"); 
+        //this.context.webkitImageSmoothingEnabled = false;
+
+        this.width = canvas.width;
+        this.height = canvas.height;
+
+        // this.canvas.width = this.width/2;
+        // this.canvas.style.width = this.width + 'px';
+        // this.canvas.height = this.height/2;
+        // this.canvas.style.height = this.height + 'px';
     }
 
     Renderer.prototype = {
@@ -77,7 +86,10 @@ herman.namespace('Renderer', function() {
          */
         update: function(node) {
             // clear
-            this.canvas.width = this.canvas.width;
+            //this.canvas.width = this.canvas.width;
+            //this.context.fillStyle = '#FFFFFF';
+            //this.context.fillRect(0, 0, this.width, this.height);
+            this.context.clearRect(0, 0, this.width, this.height);
             
             // draw into buffer
             node.update(this.context);
@@ -91,12 +103,45 @@ herman.namespace('Renderer', function() {
 
 herman.namespace('math.Matrix', function() {
     "use strict";
-    
+
+// private 
+
     /**
      * [PRECISION description]
      * @type {Number}
      */
-    var PRECISION = 5;
+    var PRECISION = 15;
+
+    /**
+     * [multiply description]
+     *
+     *                          | m2.a11 m2.a12 m2.a13 |
+     *                          | m2.a21 m2.a22 m2.a23 |
+     *                          | m2.a31 m2.a32 m2.a33 |
+     * | m1.a11 m1.a12 m1.a13 |
+     * | m1.a21 m1.a22 m1.a23 |
+     * | m1.a31 m1.a32 m1.a33 |
+     * 
+     * @param  {[type]} m1 [description]
+     * @param  {[type]} m2 [description]
+     * @return {[type]}    [description]
+     */
+    var multiply = function(m1, m2) {
+        var a11 = m1.a11;
+        var a12 = m1.a12; 
+        var a21 = m1.a21;
+        var a22 = m1.a22;
+
+        m1.a11 = (a11*m2.a11) + (a12*m2.a21);
+        m1.a12 = (a11*m2.a12) + (a12*m2.a22); 
+        m1.a13 = (a11*m2.a13) + (a12*m2.a23) + m1.a13; 
+
+        m1.a21 = (a21*m2.a11) + (a22*m2.a21);
+        m1.a22 = (a21*m2.a12) + (a22*m2.a22);
+        m1.a23 = (a21*m2.a13) + (a22*m2.a23) + m1.a23;
+    }; 
+
+// public
 
     /**
      * 3x3 Matrix
@@ -115,8 +160,8 @@ herman.namespace('math.Matrix', function() {
      * @return {Matrix}
      */
     Matrix.prototype.translate = function(tx, ty) {
-        this.a13 += tx; //Math.round(tx); // tx | 0;
-        this.a23 += ty; //Math.round(ty); // ty | 0;
+        this.a13 += tx;
+        this.a23 += ty; 
         return this;
     };
 
@@ -156,37 +201,16 @@ herman.namespace('math.Matrix', function() {
      * [transform description]
      */
     Matrix.prototype.transform = function(tx, ty, angle, scale) {
-        return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+        return this.translate(tx, ty).rotate(angle).scale(scale);
     };
 
     /**
      * [multiply description]
      * @param  {Matrix} m
      * @return {Matrix}
-     *
-     * @example
-     * 
-     *                  | m.a11 m.a12 m.a13 |
-     *                  | m.a21 m.a22 m.a23 |
-     *                  | m.a31 m.a32 m.a33 |
-     * | a11 a12 a13 |
-     * | a21 a22 a23 |
-     * | a31 a32 a33 |
-     * 
      */
     Matrix.prototype.multiply = function(m) {
-        var a11 = this.a11;
-        var a12 = this.a12; 
-        var a21 = this.a21;
-        var a22 = this.a22;
-
-        this.a11 = (a11*m.a11) + (a12*m.a21);
-        this.a12 = (a11*m.a12) + (a12*m.a22); 
-        this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
-
-        this.a21 = (a21*m.a11) + (a22*m.a21);
-        this.a22 = (a21*m.a12) + (a22*m.a22);
-        this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+        multiply(this,m);
         return this;
     };
 
@@ -194,30 +218,9 @@ herman.namespace('math.Matrix', function() {
      * [preMultiply description]
      * @param  {Matrix} m
      * @return {Matrix}
-     *
-     * @example
-     *
-     *                      | a11 a12 a13 |
-     *                      | a21 a22 a23 |
-     *                      | a31 a32 a33 |
-     * | m.a11 m.a12 m.a13 |
-     * | m.a21 m.a22 m.a23 |
-     * | m.a31 m.a32 m.a33 |
-     * 
      */
     Matrix.prototype.preMultiply = function(m) {
-        var a11 = m.a11;
-        var a12 = m.a12; 
-        var a21 = m.a21;
-        var a22 = m.a22;
-
-        this.a11 = (a11*this.a11) + (a12*this.a21);
-        this.a12 = (a11*this.a12) + (a12*this.a22); 
-        this.a13 = (a11*this.a13) + (a12*this.a23) + m.a13; 
-
-        this.a21 = (a21*this.a11) + (a22*this.a21);
-        this.a22 = (a21*this.a12) + (a22*this.a22);
-        this.a23 = (a21*this.a13) + (a22*this.a23) + m.a23;
+        multiply(m,this);
         return this;    
     };
 
@@ -284,6 +287,16 @@ herman.namespace('math.Matrix', function() {
     };
 
     /**
+     * [decompose description]
+     * @return {[type]} [description]
+     */
+    Matrix.prototype.decompose = function() {
+        var decomposed = {};
+        decomposed.rotation = herman.math.Utils.RAD_TO_DEG * Math.atan2(this.a21,this.a11);
+        return decomposed;
+    };
+
+    /**
      * [clone description]
      * @return {herman.math.Matrix} [description]
      */
@@ -319,9 +332,14 @@ herman.namespace('math.Utils', function() {
     var Utils = {
 
         /**
-         * Degrees to radians helper
+         * Degrees to radians
          */
         DEG_TO_RAD : Math.PI/180,
+
+        /**
+         * Radians to degrees
+         */
+        RAD_TO_DEG : 180/Math.PI,
 
         /**
          * [angleBetweenPoints description]
@@ -498,70 +516,6 @@ herman.namespace('Tween', function() {
 
 });
 
-// herman.namespace("DomNode",function(){
-
-//  /**
-//   * Dom Node
-//   * @param {HTMLDivElement} element
-//   */
-//  function DomNode(element) {
-//      herman.Node.call(this); 
-        
-//      if(!element) {
-//          // dev style
-//          this.element = document.createElement("div");
-//          this.element.className = "div-node";
-//          this.element.style.width = '100px';
-//          this.element.style.height = '100px';
-//          this.element.style.backgroundColor = 'white';
-//          this.element.style.border = '1px solid red';
-    
-//      } else {
-//          this.element = element;
-//      }   
-
-//      // force gpu rendering
-//      this.element.style.webkitPerspective = 1000;
-//      this.element.style.webkitBackfaceVisibility = "hidden";
-//      // node styles
-//      this.element.style.position = "absolute";
-//  }
-
-// // proto
-//  var _p = herman.inherits(DomNode, herman.Node);
-
-//  _p.update = function() {
-//      var matrix = this.getMatrix();
-
-//      // TODO cross browser
-//      this.element.style.webkitTransform = 'matrix(' + matrix.a11 + ',' + matrix.a21 + ',' + matrix.a12 + ',' + matrix.a22 + ',' + matrix.a13 + ',' + matrix.a23 + ')';   
-        
-//      // update children
-//      for (var i = 0; i < this.children.length; i++) {
-//          this.children[i].update();
-//      }
-//  }
-
-// // scene
-//  _p.addChild = function(child) {
-        
-//      this.super.addChild.apply(this,arguments); // super
-//      child.update();
-//      //TODO use stage reference
-//      document.getElementById('domStage').appendChild(child.element);
-//  };
-
-//  _p.removeChild = function(child) {
-//      this.super.removeChild.apply(this,arguments); // super
-//      //TODO use stage reference
-//      document.getElementById('domStage').removeChild(child.element);
-//  };
-
-//  return DomNode;
-
-// });
-
-
 herman.namespace('Node', function() {
     "use strict";
 
@@ -572,25 +526,77 @@ herman.namespace('Node', function() {
      * @constructor
      */
     function Node() {
+
+        /**
+         * [tag description]
+         * @type {[type]}
+         */
         this.tag = undefined;
-        this.stage = undefined;
+
+        /**
+         * parent node
+         * @type {[type]}
+         */
         this.parent = undefined;
+
+        /**
+         * child nodes
+         * @type {Array}
+         */
         this.children = [];
 
-        // world transform
+        /**
+         * world transform
+         * @type {herman}
+         */
         this.matrix = new herman.math.Matrix(); 
 
+        /**
+         * [x description]
+         * @type {Number}
+         */
         this.x = 0;
+
+        /**
+         * [y description]
+         * @type {Number}
+         */
         this.y = 0;
+
+        /**
+         * [scale description]
+         * @type {Number}
+         */
         this.scale = 1;
+
+        /**
+         * [rotation description]
+         * @type {Number}
+         */
         this.rotation = 0; 
 
-        // anchor 0-1 or px
+        /**
+         * [anchorX description]
+         * @type {Number}
+         */
         this.anchorX = 0;
+
+        /**
+         * [anchorY description]
+         * @type {Number}
+         */
         this.anchorY = 0;
 
-        // w/h
+        /**
+         * [width description]
+         * @type {Number}
+         */
         this.width = 0;
+
+        /**
+         * [height description]
+         * @type {Number}
+         */
         this.height = 0;
     }
 
@@ -600,11 +606,17 @@ herman.namespace('Node', function() {
      * @return {[type]}         [description]
      */
     Node.prototype.update = function(context) {  
-        this.updateMatrix(); 
-        this.draw(context);
-        this.children.forEach(function(element) {
-            element.update(context);
-        });
+
+        // update and draw
+        context.save();
+            this.updateMatrix(context); 
+            this.draw(context);    
+        context.restore();   
+
+        // udpate childs
+        for ( var i = 0, len = this.children.length; i < len; i++ ) {
+            this.children[i].update(context); 
+        } 
     };
 
     /**
@@ -612,13 +624,15 @@ herman.namespace('Node', function() {
      * @return {[type]} [description]
      */
     Node.prototype.draw = function(context) {
-        
+        // overwrite
     };
         
     /**
      * update world matrix
      */
-    Node.prototype.updateMatrix = function() {  
+    Node.prototype.updateMatrix = function(context) {  
+
+        // build local matrix
         this.matrix.identity().transform(
             this.x + this.anchorX,
             this.y + this.anchorY, 
@@ -626,9 +640,15 @@ herman.namespace('Node', function() {
             this.scale
         );
 
+        // apply world matrix 
+        // TODO check preMultiply
         if(this.parent) {
-            this.matrix.preMultiply(this.parent.matrix);    
+            var world = this.parent.matrix.clone();
+            this.matrix = world.multiply(this.matrix);    
         } 
+
+        // update context transform
+        context.setTransform(this.matrix.a11, this.matrix.a21, this.matrix.a12, this.matrix.a22, this.matrix.a13, this.matrix.a23); 
     };
 
     /**
@@ -670,8 +690,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.addChildAt = function(child, index) {
         if(index < 0 || index > this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         if(child instanceof Node && !this.hasChild(child)) {
             if(child.parent) { 
@@ -690,6 +709,8 @@ herman.namespace('Node', function() {
     Node.prototype.removeChild = function(child) {
         if(child instanceof Node && this.hasChild(child)) {
             this.removeChildAt(this.children.indexOf(child));
+        } else {
+            throw new Error('object is not a child');
         }
     };
 
@@ -700,8 +721,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.removeChildAt = function(index) {
         if(index < 0 || index >= this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         this.children[index].parent = null;
         this.children.splice(index, 1);
@@ -725,13 +745,12 @@ herman.namespace('Node', function() {
     };
 
     /**
-     * [getChild description]
-     * @param  {[type]} child [description]
-     * @return {[type]}       [description]
+     * [getChildByTagName description]
+     * @param  {[type]} name [description]
+     * @return {[type]}      [description]
      */
-    Node.prototype.getChild = function(child) {
-        var index = this.children.indexOf(child);
-        return (index !== -1) ? this.children[index] : undefined;
+    Node.prototype.getChildByTagName = function(name) {
+        // implement
     };
 
     /**
@@ -741,8 +760,7 @@ herman.namespace('Node', function() {
      */
     Node.prototype.getChildAt = function(index) {
         if(index < 0 || index >= this.children.length) {
-            console.log('index out of bounds');
-            return;
+            throw new Error('index does not exist');
         }
         return this.children[index];
     };
@@ -764,18 +782,14 @@ herman.namespace("Sprite", function() {
     function Sprite(bitmap) {
         herman.Node.call(this);
         this.bitmap = bitmap;
+
     }
 
 // proto
     herman.inherits(Sprite, herman.Node);
 
-    //TODO custom draw method
-    Sprite.prototype.draw = function(context) {
-        var matrix = this.matrix;
-        //context.save();
-            context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
-            context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
-        //context.restore();
+    Sprite.prototype.draw = function(context) {      
+        context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
     };
 
     return Sprite;
@@ -796,19 +810,99 @@ herman.namespace("Text", function() {
     }
 
 // proto
-    var _p = herman.inherits(Text, herman.Node);
+    herman.inherits(Text, herman.Node);
 
-    //TODO custom draw method
-    _p.draw = function(context) {
-        var matrix = this.getMatrix();
-        context.save();
-            context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
-            context.fillStyle = "#00F";
-            context.font = "italic 30pt Arial";
-            context.fillText(this.text, 20, 50);
-        context.restore();
+    Text.prototype.draw = function(context) {
+        context.fillStyle = "#00F";
+        context.font = "italic 30pt Arial";
+        context.fillText(this.text, 20, 50);
     };
 
     return Text;
+
+});
+
+
+herman.namespace("DomNode",function(){
+
+ /**
+  * Dom Node
+  * @param {HTMLDivElement} element
+  */
+ function DomNode(element) {
+     herman.Node.call(this);
+        
+     if(!element) {
+         // dev style
+         this.element = document.createElement("div");
+         this.element.className = "div-node";
+         this.element.style.width = '100px';
+         this.element.style.height = '100px';
+         this.element.style.backgroundColor = 'white';
+         this.element.style.border = '1px solid red';    
+     } else {
+         this.element = element;
+     }   
+
+     // force gpu rendering
+     this.element.style.webkitPerspective = 1000;
+     this.element.style.webkitBackfaceVisibility = "hidden";
+     // node styles
+     this.element.style.position = "absolute";
+}
+
+// proto
+    herman.inherits(DomNode, herman.Node);
+
+    DomNode.prototype.update = function() {  
+
+        // update and draw
+        this.updateMatrix(); 
+        this.draw();     
+
+        // udpate childs
+        for ( var i = 0, len = this.children.length; i < len; i++ ) {
+            this.children[i].update(); 
+        } 
+    };
+
+    DomNode.prototype.updateMatrix = function() {
+        // build local matrix
+        this.matrix.identity().transform(
+            this.x + this.anchorX,
+            this.y + this.anchorY, 
+            this.rotation, 
+            this.scale
+        );
+
+        // apply world matrix 
+        // TODO check preMultiply
+        if(this.parent) {
+            var world = this.parent.matrix.clone();
+            this.matrix = world.multiply(this.matrix);    
+        } 
+
+        // TODO cross browser
+        var matrixString = 'matrix(' + this.matrix.a11 + ',' + this.matrix.a21 + ',' + this.matrix.a12 + ',' + this.matrix.a22 + ',' + this.matrix.a13 + ',' + this.matrix.a23 + ')'; 
+        this.element.style.webkitTransform = matrixString;
+    };
+
+// scene
+     DomNode.prototype.addChild = function(child) {
+            
+         this.super.addChild.apply(this,arguments); // super
+        
+         //TODO use stage reference
+         this.updateMatrix();
+         document.getElementById('domStage').appendChild(child.element);
+     };
+
+     DomNode.prototype.removeChild = function(child) {
+         this.super.removeChild.apply(this,arguments); // super
+         //TODO use stage reference
+         document.getElementById('domStage').removeChild(child.element);
+     };
+
+     return DomNode;
 
 });

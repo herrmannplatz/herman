@@ -45,6 +45,8 @@
             
                 <li><a href="../classes/Node.html">Node</a></li>
             
+                <li><a href="../classes/Sprite.html">Sprite</a></li>
+            
                 <li><a href="../classes/Vector.html">Vector</a></li>
             
             </ul>
@@ -156,12 +158,21 @@ herman.namespace(&#x27;Renderer&#x27;, function() {
     &quot;use strict&quot;;  
 
     /**
-     * 
+     * TODO: init with config
      * @param {HTMLCanvasElement} canvas 
      */
     function Renderer(canvas) {
         this.canvas = canvas;
-        this.context = this.canvas.getContext(&quot;2d&quot;);  
+        this.context = this.canvas.getContext(&quot;2d&quot;); 
+        //this.context.webkitImageSmoothingEnabled = false;
+
+        this.width = canvas.width;
+        this.height = canvas.height;
+
+        // this.canvas.width = this.width/2;
+        // this.canvas.style.width = this.width + &#x27;px&#x27;;
+        // this.canvas.height = this.height/2;
+        // this.canvas.style.height = this.height + &#x27;px&#x27;;
     }
 
     Renderer.prototype = {
@@ -171,7 +182,10 @@ herman.namespace(&#x27;Renderer&#x27;, function() {
          */
         update: function(node) {
             // clear
-            this.canvas.width = this.canvas.width;
+            //this.canvas.width = this.canvas.width;
+            //this.context.fillStyle = &#x27;#FFFFFF&#x27;;
+            //this.context.fillRect(0, 0, this.width, this.height);
+            this.context.clearRect(0, 0, this.width, this.height);
             
             // draw into buffer
             node.update(this.context);
@@ -183,41 +197,47 @@ herman.namespace(&#x27;Renderer&#x27;, function() {
 
 });
 
-herman.namespace(&#x27;math.Utils&#x27;, function() {
-    &quot;use strict&quot;;
-
-    var Utils = {
-
-        /**
-         * Degrees to radians helper
-         */
-        DEG_TO_RAD : Math.PI/180,
-
-        /**
-         * [angleBetweenPoints description]
-         * @param  {[type]} p1 [description]
-         * @param  {[type]} p2 [description]
-         * @return {[type]}    [description]
-         */
-        angleBetweenPoints : function(p1, p2) {},
-
-        /**
-         * [intersect description]
-         * @return {[type]} [description]
-         */
-        intersect : function(l1, l2) {}
-    };
-
-    return Utils;
-
-});
-
 herman.namespace(&#x27;math.Matrix&#x27;, function() {
     &quot;use strict&quot;;
 
-    //TODO: scaleX, scaleY or scaleNonUniform
+// private 
 
+    /**
+     * [PRECISION description]
+     * @type {Number}
+     */
     var PRECISION = 15;
+
+    /**
+     * [multiply description]
+     *
+     *                          | m2.a11 m2.a12 m2.a13 |
+     *                          | m2.a21 m2.a22 m2.a23 |
+     *                          | m2.a31 m2.a32 m2.a33 |
+     * | m1.a11 m1.a12 m1.a13 |
+     * | m1.a21 m1.a22 m1.a23 |
+     * | m1.a31 m1.a32 m1.a33 |
+     * 
+     * @param  {[type]} m1 [description]
+     * @param  {[type]} m2 [description]
+     * @return {[type]}    [description]
+     */
+    var multiply = function(m1, m2) {
+        var a11 = m1.a11;
+        var a12 = m1.a12; 
+        var a21 = m1.a21;
+        var a22 = m1.a22;
+
+        m1.a11 = (a11*m2.a11) + (a12*m2.a21);
+        m1.a12 = (a11*m2.a12) + (a12*m2.a22); 
+        m1.a13 = (a11*m2.a13) + (a12*m2.a23) + m1.a13; 
+
+        m1.a21 = (a21*m2.a11) + (a22*m2.a21);
+        m1.a22 = (a21*m2.a12) + (a22*m2.a22);
+        m1.a23 = (a21*m2.a13) + (a22*m2.a23) + m1.a23;
+    }; 
+
+// public
 
     /**
      * 3x3 Matrix
@@ -236,8 +256,8 @@ herman.namespace(&#x27;math.Matrix&#x27;, function() {
      * @return {Matrix}
      */
     Matrix.prototype.translate = function(tx, ty) {
-        this.a13 += tx; //Math.round(tx); // tx | 0;
-        this.a23 += ty; //Math.round(ty); // ty | 0;
+        this.a13 += tx;
+        this.a23 += ty; 
         return this;
     };
 
@@ -277,38 +297,27 @@ herman.namespace(&#x27;math.Matrix&#x27;, function() {
      * [transform description]
      */
     Matrix.prototype.transform = function(tx, ty, angle, scale) {
-        return this.translate(tx, ty).rotate(angle).scale(scale); // TxRxS
+        return this.translate(tx, ty).rotate(angle).scale(scale);
     };
 
     /**
      * [multiply description]
      * @param  {Matrix} m
      * @return {Matrix}
-     *
-     * @example
-     * 
-     *                  | m.a11 m.a12 m.a13 |
-     *                  | m.a21 m.a22 m.a23 |
-     *                  | m.a31 m.a32 m.a33 |
-     * | a11 a12 a13 |
-     * | a21 a22 a23 |
-     * | a31 a32 a33 |
-     * 
      */
     Matrix.prototype.multiply = function(m) {
-        var a11 = this.a11;
-        var a12 = this.a12; 
-        var a21 = this.a21;
-        var a22 = this.a22;
-
-        this.a11 = (a11*m.a11) + (a12*m.a21);
-        this.a12 = (a11*m.a12) + (a12*m.a22); 
-        this.a13 = (a11*m.a13) + (a12*m.a23) + this.a13; 
-
-        this.a21 = (a21*m.a11) + (a22*m.a21);
-        this.a22 = (a21*m.a12) + (a22*m.a22);
-        this.a23 = (a21*m.a13) + (a22*m.a23) + this.a23;
+        multiply(this,m);
         return this;
+    };
+
+    /**
+     * [preMultiply description]
+     * @param  {Matrix} m
+     * @return {Matrix}
+     */
+    Matrix.prototype.preMultiply = function(m) {
+        multiply(m,this);
+        return this;    
     };
 
     /**
@@ -352,7 +361,6 @@ herman.namespace(&#x27;math.Matrix&#x27;, function() {
      */
     Matrix.prototype.determinant = function() {
         return this.a11 * this.a22 - this.a21 * this.a12;
-
     };
 
     /**
@@ -375,6 +383,31 @@ herman.namespace(&#x27;math.Matrix&#x27;, function() {
     };
 
     /**
+     * [decompose description]
+     * @return {[type]} [description]
+     */
+    Matrix.prototype.decompose = function() {
+        var decomposed = {};
+        decomposed.rotation = herman.math.Utils.RAD_TO_DEG * Math.atan2(this.a21,this.a11);
+        return decomposed;
+    };
+
+    /**
+     * [clone description]
+     * @return {herman.math.Matrix} [description]
+     */
+    Matrix.prototype.clone = function() {
+        var m = new Matrix();
+        m.a11 = this.a11;
+        m.a12 = this.a12;
+        m.a13 = this.a13;
+        m.a21 = this.a21;
+        m.a22 = this.a22;
+        m.a23 = this.a23;
+        return m;
+    };
+
+    /**
      * returns matrix as a nicely formatted string
      * @return {String}
      */
@@ -382,10 +415,44 @@ herman.namespace(&#x27;math.Matrix&#x27;, function() {
         return  &#x27;matrix&#x27; + &#x27;\n&#x27; +
                 this.a11 + &#x27; &#x27; + this.a12 + &#x27; &#x27; + this.a13 + &#x27;\n&#x27; +  
                 this.a21 + &#x27; &#x27; + this.a22 + &#x27; &#x27; + this.a23 + &#x27;\n&#x27; + 
-                &#x27;0&#x27;      + &#x27; &#x27; + &#x27;0&#x27;      + &#x27; &#x27; + &#x27;1&#x27;      + &#x27;\n&#x27;;
+                this.a31 + &#x27; &#x27; + this.a32 + &#x27; &#x27; + this.a33 + &#x27;\n&#x27;;
     };
 
     return Matrix;
+
+});
+
+herman.namespace(&#x27;math.Utils&#x27;, function() {
+    &quot;use strict&quot;;
+
+    var Utils = {
+
+        /**
+         * Degrees to radians
+         */
+        DEG_TO_RAD : Math.PI/180,
+
+        /**
+         * Radians to degrees
+         */
+        RAD_TO_DEG : 180/Math.PI,
+
+        /**
+         * [angleBetweenPoints description]
+         * @param  {[type]} p1 [description]
+         * @param  {[type]} p2 [description]
+         * @return {[type]}    [description]
+         */
+        angleBetweenPoints : function(p1, p2) {},
+
+        /**
+         * [intersect description]
+         * @return {[type]} [description]
+         */
+        intersect : function(l1, l2) {}
+    };
+
+    return Utils;
 
 });
 
@@ -545,70 +612,6 @@ herman.namespace(&#x27;Tween&#x27;, function() {
 
 });
 
-// herman.namespace(&quot;DomNode&quot;,function(){
-
-//  /**
-//   * Dom Node
-//   * @param {HTMLDivElement} element
-//   */
-//  function DomNode(element) {
-//      herman.Node.call(this); 
-        
-//      if(!element) {
-//          // dev style
-//          this.element = document.createElement(&quot;div&quot;);
-//          this.element.className = &quot;div-node&quot;;
-//          this.element.style.width = &#x27;100px&#x27;;
-//          this.element.style.height = &#x27;100px&#x27;;
-//          this.element.style.backgroundColor = &#x27;white&#x27;;
-//          this.element.style.border = &#x27;1px solid red&#x27;;
-    
-//      } else {
-//          this.element = element;
-//      }   
-
-//      // force gpu rendering
-//      this.element.style.webkitPerspective = 1000;
-//      this.element.style.webkitBackfaceVisibility = &quot;hidden&quot;;
-//      // node styles
-//      this.element.style.position = &quot;absolute&quot;;
-//  }
-
-// // proto
-//  var _p = herman.inherits(DomNode, herman.Node);
-
-//  _p.update = function() {
-//      var matrix = this.getMatrix();
-
-//      // TODO cross browser
-//      this.element.style.webkitTransform = &#x27;matrix(&#x27; + matrix.a11 + &#x27;,&#x27; + matrix.a21 + &#x27;,&#x27; + matrix.a12 + &#x27;,&#x27; + matrix.a22 + &#x27;,&#x27; + matrix.a13 + &#x27;,&#x27; + matrix.a23 + &#x27;)&#x27;;   
-        
-//      // update children
-//      for (var i = 0; i &lt; this.children.length; i++) {
-//          this.children[i].update();
-//      }
-//  }
-
-// // scene
-//  _p.addChild = function(child) {
-        
-//      this.super.addChild.apply(this,arguments); // super
-//      child.update();
-//      //TODO use stage reference
-//      document.getElementById(&#x27;domStage&#x27;).appendChild(child.element);
-//  };
-
-//  _p.removeChild = function(child) {
-//      this.super.removeChild.apply(this,arguments); // super
-//      //TODO use stage reference
-//      document.getElementById(&#x27;domStage&#x27;).removeChild(child.element);
-//  };
-
-//  return DomNode;
-
-// });
-
-
 herman.namespace(&#x27;Node&#x27;, function() {
     &quot;use strict&quot;;
 
@@ -619,20 +622,77 @@ herman.namespace(&#x27;Node&#x27;, function() {
      * @constructor
      */
     function Node() {
+
+        /**
+         * [tag description]
+         * @type {[type]}
+         */
         this.tag = undefined;
-        this.stage = undefined;
+
+        /**
+         * parent node
+         * @type {[type]}
+         */
         this.parent = undefined;
+
+        /**
+         * child nodes
+         * @type {Array}
+         */
         this.children = [];
-        this.matrix = new herman.math.Matrix(); // calculate on the fly
+
+        /**
+         * world transform
+         * @type {herman}
+         */
+        this.matrix = new herman.math.Matrix(); 
+
+        /**
+         * [x description]
+         * @type {Number}
+         */
         this.x = 0;
+
+        /**
+         * [y description]
+         * @type {Number}
+         */
         this.y = 0;
+
+        /**
+         * [scale description]
+         * @type {Number}
+         */
         this.scale = 1;
+
+        /**
+         * [rotation description]
+         * @type {Number}
+         */
         this.rotation = 0; 
-        // anchor 0-1 or px
+
+        /**
+         * [anchorX description]
+         * @type {Number}
+         */
         this.anchorX = 0;
+
+        /**
+         * [anchorY description]
+         * @type {Number}
+         */
         this.anchorY = 0;
-        // w/h
+
+        /**
+         * [width description]
+         * @type {Number}
+         */
         this.width = 0;
+
+        /**
+         * [height description]
+         * @type {Number}
+         */
         this.height = 0;
     }
 
@@ -641,52 +701,92 @@ herman.namespace(&#x27;Node&#x27;, function() {
      * @param  {[type]} context [description]
      * @return {[type]}         [description]
      */
-    Node.prototype.update = function(context) {        
-        // update children
-        this.children.forEach(function(element){
-            element.update(context);
-        });
+    Node.prototype.update = function(context) {  
+
+        // update and draw
+        context.save();
+            this.updateMatrix(context); 
+            this.draw(context);    
+        context.restore();   
+
+        // udpate childs
+        for ( var i = 0, len = this.children.length; i &lt; len; i++ ) {
+            this.children[i].update(context); 
+        } 
     };
 
-// transform
+    /**
+     * [draw description]
+     * @return {[type]} [description]
+     */
+    Node.prototype.draw = function(context) {
+        // overwrite
+    };
         
     /**
-     * get world matrix
-     * @return {herman.Matrix} 
+     * update world matrix
      */
-    Node.prototype.getMatrix = function() { 
-        //this.matrix.identity(); // clear      
-        this.matrix = new herman.math.Matrix().transform(this.x + this.anchorX,this.y + this.anchorY, this.rotation, this.scale); // avoid new matrix
+    Node.prototype.updateMatrix = function(context) {  
 
-        if (this.parent) {
-            this.matrix = this.parent.getMatrix().multiply(this.matrix); //TODO use loop ?
+        // build local matrix
+        this.matrix.identity().transform(
+            this.x + this.anchorX,
+            this.y + this.anchorY, 
+            this.rotation, 
+            this.scale
+        );
+
+        // apply world matrix 
+        // TODO check preMultiply
+        if(this.parent) {
+            var world = this.parent.matrix.clone();
+            this.matrix = world.multiply(this.matrix);    
         } 
-        return this.matrix;
+
+        // update context transform
+        context.setTransform(this.matrix.a11, this.matrix.a21, this.matrix.a12, this.matrix.a22, this.matrix.a13, this.matrix.a23); 
     };
 
+    /**
+     * [localToGlobal description]
+     * @param  {[type]} x [description]
+     * @param  {[type]} y [description]
+     * @return {[type]}   [description]
+     */
     Node.prototype.localToGlobal = function(x, y) {
-        var mat = this.getMatrix();
-        mat.translate(x, y);
-        return new herman.math.Vector(mat.a13, mat.a23);
-
+        var m = this.matrix.clone();
+        m.translate(x, y);
+        return new herman.math.Vector(m.a13, m.a23);
     };
 
+    /**
+     * [globalToLocal description]
+     * @param  {[type]} x [description]
+     * @param  {[type]} y [description]
+     * @return {[type]}   [description]
+     */
     Node.prototype.globalToLocal = function(x, y) {
         // get mat, invert mat, append x,y
-        var mat = this.getMatrix();
-        return new herman.math.Vector(x - mat.a13, y - mat.a23); // 600, 600 node 300, 300 -&gt; 10, 10
+        var m = this.matrix.clone();
+        return new herman.math.Vector(x - m.a13, y - m.a23); // 600, 600 node 300, 300 -&gt; 10, 10
     };
 
-// scene graph
-            
+    /**
+     * [addChild description]
+     * @param {[type]} child [description]
+     */
     Node.prototype.addChild = function(child) {
         this.addChildAt(child, this.children.length);
     };
 
+    /**
+     * [addChildAt description]
+     * @param {[type]} child [description]
+     * @param {[type]} index [description]
+     */
     Node.prototype.addChildAt = function(child, index) {
         if(index &lt; 0 || index &gt; this.children.length) {
-            console.log(&#x27;index out of bounds&#x27;);
-            return;
+            throw new Error(&#x27;index does not exist&#x27;);
         }
         if(child instanceof Node &amp;&amp; !this.hasChild(child)) {
             if(child.parent) { 
@@ -697,38 +797,66 @@ herman.namespace(&#x27;Node&#x27;, function() {
         }
     };
 
+    /**
+     * [removeChild description]
+     * @param  {[type]} child [description]
+     * @return {[type]}       [description]
+     */
     Node.prototype.removeChild = function(child) {
         if(child instanceof Node &amp;&amp; this.hasChild(child)) {
             this.removeChildAt(this.children.indexOf(child));
+        } else {
+            throw new Error(&#x27;object is not a child&#x27;);
         }
     };
 
+    /**
+     * [removeChildAt description]
+     * @param  {[type]} index [description]
+     * @return {[type]}       [description]
+     */
     Node.prototype.removeChildAt = function(index) {
         if(index &lt; 0 || index &gt;= this.children.length) {
-            console.log(&#x27;index out of bounds&#x27;);
-            return;
+            throw new Error(&#x27;index does not exist&#x27;);
         }
         this.children[index].parent = null;
         this.children.splice(index, 1);
     };
 
+    /**
+     * [hasChild description]
+     * @param  {[type]}  child [description]
+     * @return {Boolean}       [description]
+     */
     Node.prototype.hasChild = function(child) {
         return this.children.indexOf(child) !== -1;
     };
 
+    /**
+     * [getChildren description]
+     * @return {[type]} [description]
+     */
     Node.prototype.getChildren = function() {
         return this.children;
     };
 
-    Node.prototype.getChild = function(child) {
-        var index = this.children.indexOf(child);
-        return (index !== -1) ? this.children[index] : undefined;
+    /**
+     * [getChildByTagName description]
+     * @param  {[type]} name [description]
+     * @return {[type]}      [description]
+     */
+    Node.prototype.getChildByTagName = function(name) {
+        // implement
     };
 
+    /**
+     * [getChildAt description]
+     * @param  {[type]} index [description]
+     * @return {[type]}       [description]
+     */
     Node.prototype.getChildAt = function(index) {
         if(index &lt; 0 || index &gt;= this.children.length) {
-            console.log(&#x27;index out of bounds&#x27;);
-            return;
+            throw new Error(&#x27;index does not exist&#x27;);
         }
         return this.children[index];
     };
@@ -742,33 +870,22 @@ herman.namespace(&quot;Sprite&quot;, function() {
     &quot;use strict&quot;;
     
     /**
-     * Canvas Node
+     * Sprite
+     * 
+     * @class Sprite
      * @constructor
      */
     function Sprite(bitmap) {
         herman.Node.call(this);
         this.bitmap = bitmap;
+
     }
 
 // proto
-    var _p = herman.inherits(Sprite, herman.Node);
+    herman.inherits(Sprite, herman.Node);
 
-    //TODO custom draw method
-    _p.draw = function(context) {
-        var matrix = this.getMatrix();
-        context.save();
-        context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
+    Sprite.prototype.draw = function(context) {      
         context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
-        context.restore();
-    };
-
-    _p.update = function(context) {
-        this.draw(context);
-        
-        // update children
-        this.children.forEach(function(element){
-            element.update(context);
-        });
     };
 
     return Sprite;
@@ -789,24 +906,100 @@ herman.namespace(&quot;Text&quot;, function() {
     }
 
 // proto
-    var _p = herman.inherits(Text, herman.Node);
+    herman.inherits(Text, herman.Node);
 
-    //TODO custom draw method
-    _p.draw = function(context) {
-        var matrix = this.getMatrix();
-        context.save();
-            context.setTransform(matrix.a11, matrix.a21, matrix.a12, matrix.a22, matrix.a13, matrix.a23);
-            context.fillStyle = &quot;#00F&quot;;
-            context.font = &quot;italic 30pt Arial&quot;;
-            context.fillText(this.text, 20, 50);
-        context.restore();
-    };
-
-    _p.update = function(context) {
-        this.draw(context);
+    Text.prototype.draw = function(context) {
+        context.fillStyle = &quot;#00F&quot;;
+        context.font = &quot;italic 30pt Arial&quot;;
+        context.fillText(this.text, 20, 50);
     };
 
     return Text;
+
+});
+
+
+herman.namespace(&quot;DomNode&quot;,function(){
+
+ /**
+  * Dom Node
+  * @param {HTMLDivElement} element
+  */
+ function DomNode(element) {
+     herman.Node.call(this);
+        
+     if(!element) {
+         // dev style
+         this.element = document.createElement(&quot;div&quot;);
+         this.element.className = &quot;div-node&quot;;
+         this.element.style.width = &#x27;100px&#x27;;
+         this.element.style.height = &#x27;100px&#x27;;
+         this.element.style.backgroundColor = &#x27;white&#x27;;
+         this.element.style.border = &#x27;1px solid red&#x27;;    
+     } else {
+         this.element = element;
+     }   
+
+     // force gpu rendering
+     this.element.style.webkitPerspective = 1000;
+     this.element.style.webkitBackfaceVisibility = &quot;hidden&quot;;
+     // node styles
+     this.element.style.position = &quot;absolute&quot;;
+}
+
+// proto
+    herman.inherits(DomNode, herman.Node);
+
+    DomNode.prototype.update = function() {  
+
+        // update and draw
+        this.updateMatrix(); 
+        this.draw();     
+
+        // udpate childs
+        for ( var i = 0, len = this.children.length; i &lt; len; i++ ) {
+            this.children[i].update(); 
+        } 
+    };
+
+    DomNode.prototype.updateMatrix = function() {
+        // build local matrix
+        this.matrix.identity().transform(
+            this.x + this.anchorX,
+            this.y + this.anchorY, 
+            this.rotation, 
+            this.scale
+        );
+
+        // apply world matrix 
+        // TODO check preMultiply
+        if(this.parent) {
+            var world = this.parent.matrix.clone();
+            this.matrix = world.multiply(this.matrix);    
+        } 
+
+        // TODO cross browser
+        var matrixString = &#x27;matrix(&#x27; + this.matrix.a11 + &#x27;,&#x27; + this.matrix.a21 + &#x27;,&#x27; + this.matrix.a12 + &#x27;,&#x27; + this.matrix.a22 + &#x27;,&#x27; + this.matrix.a13 + &#x27;,&#x27; + this.matrix.a23 + &#x27;)&#x27;; 
+        this.element.style.webkitTransform = matrixString;
+    };
+
+// scene
+     DomNode.prototype.addChild = function(child) {
+            
+         this.super.addChild.apply(this,arguments); // super
+        
+         //TODO use stage reference
+         this.updateMatrix();
+         document.getElementById(&#x27;domStage&#x27;).appendChild(child.element);
+     };
+
+     DomNode.prototype.removeChild = function(child) {
+         this.super.removeChild.apply(this,arguments); // super
+         //TODO use stage reference
+         document.getElementById(&#x27;domStage&#x27;).removeChild(child.element);
+     };
+
+     return DomNode;
 
 });
 

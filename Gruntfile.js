@@ -1,5 +1,14 @@
 module.exports = function(grunt) {
 
+  var srcFiles = [
+    'src/herman.js',
+    'src/render/*.js',
+    'src/math/*.js',
+    'src/tween/*.js',
+    'src/scene/*.js',
+    'src/experimental/*.js'
+  ];
+
   // Project configuration.
   grunt.initConfig({
 
@@ -11,7 +20,7 @@ module.exports = function(grunt) {
 
     concat: {
        dist: {
-        src: ['src/herman.js','src/render/*.js','src/math/*.js','src/tween/*.js','src/scene/*.js'],
+        src: srcFiles,
         dest: 'build/<%= pkg.name %>.js'
       }
     },    
@@ -60,7 +69,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
   // tasks
-  grunt.registerTask('default', ['concat','jasmine']);
-  grunt.registerTask('deploy', ['jshint','concat','yuidoc','uglify','jasmine']);
+  grunt.registerTask('default', ['concat']);
+
+  grunt.registerTask('test', ['concat','jasmine']);
+
+  grunt.registerTask('deploy', ['jshint','concat','jasmine','uglify','yuidoc']);
 
 };
