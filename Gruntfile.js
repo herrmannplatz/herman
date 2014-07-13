@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
   var srcFiles = [
+    'src/utils/polyfill.js',
     'src/herman.js',
     'src/render/*.js',
     'src/math/*.js',
@@ -52,7 +53,7 @@ module.exports = function(grunt) {
       pivotal: {
         src: 'build/<%= pkg.name %>.js',
         options: {
-          display: 'full',
+          display: 'short',
           specs: 'spec/*Spec.js',
           helpers: 'spec/*Helper.js'
         }

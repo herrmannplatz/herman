@@ -1,3 +1,12 @@
+// shim layer with setTimeout fallback
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+        };
+})();
 
 (function(window) {
 
@@ -10,7 +19,7 @@
     /**
      * @property {Number} VERSION herman version
      */
-    herman.VERSION = 0.1;
+    herman.VERSION = 0;
 
     /**
      * create namespace
@@ -45,16 +54,6 @@
         child.prototype.super = parent.prototype;
         return child.prototype;
     };
-
-    // shim layer with setTimeout fallback
-    window.requestAnimFrame = (function(){
-        return  window.requestAnimationFrame       ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame    ||
-                function( callback ){
-                    window.setTimeout(callback, 1000 / 60);
-            };
-    })();
 
 })(window);
 
