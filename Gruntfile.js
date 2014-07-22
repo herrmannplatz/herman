@@ -53,7 +53,7 @@ module.exports = function(grunt) {
       pivotal: {
         src: 'build/<%= pkg.name %>.js',
         options: {
-          display: 'short',
+          display: 'full',
           specs: 'spec/*Spec.js',
           helpers: 'spec/*Helper.js'
         }
