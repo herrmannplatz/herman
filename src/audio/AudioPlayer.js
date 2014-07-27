@@ -1,3 +1,4 @@
+
 herman.namespace('audio.AudioPlayer', function() {
     "use strict";
 
@@ -8,7 +9,6 @@ herman.namespace('audio.AudioPlayer', function() {
      */
     var AudioPlayer = (function() {
 
-        // only one background sound can be play at the same time
         var background;
 
         return {

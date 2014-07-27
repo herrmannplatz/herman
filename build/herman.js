@@ -821,6 +821,7 @@ herman.namespace("Text", function() {
 
 });
 
+
 herman.namespace('audio.AudioPlayer', function() {
     "use strict";
 
@@ -831,7 +832,6 @@ herman.namespace('audio.AudioPlayer', function() {
      */
     var AudioPlayer = (function() {
 
-        // only one background sound can be play at the same time
         var background;
 
         return {
@@ -951,7 +951,7 @@ herman.namespace('audio.Sound', function() {
     }
 
     function createSource(buffer) {
-        var source = context.createBufferSource()
+        var source = context.createBufferSource();
         source.buffer = buffer;
 
         // attach gain node
@@ -990,7 +990,7 @@ herman.namespace('audio.Sound', function() {
                     self.play();
                 }, 
                 function(error) {
-                    console.warn('Unable to play background music ' + file)
+                    console.warn('Unable to play background music ' + file);
                 });
         };
         request.send();
@@ -1009,9 +1009,8 @@ herman.namespace('audio.Sound', function() {
     };
 
     Sound.prototype.play = function(offset) {
-        if (this.source) {
-            this.source.stop(0);
-        }
+        this.stop();
+
         var info = createSource(this.buffer);
         this.source = info.source;
         this.gainNode = info.gain;
@@ -1022,27 +1021,20 @@ herman.namespace('audio.Sound', function() {
 
         this.startTime = context.currentTime;
         this.source.start(0, offset || 0); 
-        console.log('startTime ' + this.startTime);
     };
 
     Sound.prototype.pause = function() {
-        if (this.source) {
-            this.source.stop(0);
-            this.startOffset += context.currentTime - this.startTime;
-            console.log('startOffset ' + this.startOffset);
-        }
+        this.stop();
+        this.startOffset += context.currentTime - this.startTime;
     };
 
     Sound.prototype.resume = function() {
-        console.log('buffer duration ' + (this.buffer.duration));
-        console.log('resume offset ' + (this.startOffset % this.buffer.duration));
         this.play(this.startOffset % this.buffer.duration);
     };
 
     Sound.prototype.stop = function() {
         if (this.source) {
             this.source.stop(0);
-            this.startOffset = 0;
         }
     };
 

@@ -59,6 +59,20 @@ module.exports = function(grunt) {
           helpers: 'spec/*Helper.js'
         }
       }
+    },
+
+    watch: {
+      files: ['src/**/*'],
+      tasks: ['default'],
+    },
+
+    connect: {
+        server: {
+            options: {
+                port: 8000,
+                base: '.'
+            }
+        }
     }
 
   });
@@ -69,12 +83,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // tasks
-  grunt.registerTask('default', ['concat']);
-
-  grunt.registerTask('test', ['concat','jasmine']);
-
-  grunt.registerTask('deploy', ['jshint','concat','jasmine','uglify','yuidoc']);
+  grunt.registerTask('default', ['concat','jasmine']);
+  grunt.registerTask('build', ['jshint','concat','jasmine','uglify','yuidoc']);
+  grunt.registerTask('serve', ['connect','watch']);
 
 };
