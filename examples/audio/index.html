@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>herman sprite example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style type="text/css">
+ 
+            /* small ( 0px - 480px) */
+            .countainer {
+                margin: 0 auto; 
+                max-width: 1140px;                
+                width: 100%;     
+            }
+            .sound-list {                
+                list-style: none;
+                padding: 0;
+            }
+
+            .sound-item {
+                width: 100%;
+                float: left;
+            }
+            
+            /* medium ( 769px - 1024px) */
+            @media only screen and (min-width : 769px) and (max-width : 1024px) {
+                .sound-item {
+                    width: 50%;
+                }
+            }   
+            
+            /* large ( 1025px - ...) */
+            @media only screen and (min-width : 1025px) {
+                .sound-item {
+                    width: 33%;
+                }
+            }             
+
+        </style>
+    </head>
+    <body onload="init()">
+        <h1>Background Music</h1>
+        <ul class="sound-list countainer">
+            <li class="sound-item sound-item-background" data-file="audio/Pizzicato.mp3">
+                <h2>Pizzicato</h2>
+                <button type="button" >play</button>
+                <button type="button" >pause</button>
+                <button type="button" >resume</button>
+                <button type="button" >stop</button>
+                <button type="button" >rewind</button>
+                <button type="button" >toggle</button>
+            </li>
+            <li class="sound-item sound-item-background" data-file="audio/sample.mp3">
+                <h2>Sample</h2>
+                <button type="button" >play</button>
+                <button type="button" >pause</button>
+                <button type="button" >resume</button>
+                <button type="button" >stop</button>
+                <button type="button" >rewind</button>
+                <button type="button" >toggle</button>
+            </li>
+            <li class="sound-item sound-item-background" data-file="audio/All.mp3">
+                <h2>All</h2>
+                <button type="button" >play</button>
+                <button type="button" >pause</button>
+                <button type="button" >resume</button>
+                <button type="button" >stop</button>
+                <button type="button" >rewind</button>
+                <button type="button" >toggle</button>
+            </li>
+        </ul>      
+
+        <script src="../../build/herman.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

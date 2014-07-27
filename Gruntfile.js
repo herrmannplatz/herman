@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     'src/math/*.js',
     'src/tween/*.js',
     'src/scene/*.js',
+    'src/audio/*.js',
     'src/experimental/*.js'
   ];
 
