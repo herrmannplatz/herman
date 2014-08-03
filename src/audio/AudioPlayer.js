@@ -1,19 +1,43 @@
 
+// TODO: fix rewind
 herman.namespace('audio.AudioPlayer', function() {
     "use strict";
-
-// AudioPlayer 
     
     /**
      * influenced by cocos2d SimpleAudioEngine
      */
     var AudioPlayer = (function() {
 
-        var background;
+        /**
+         * background music instance
+         */
+        var background = null;
+
+        /**
+         * sound effects storage
+         */
+        var effects = {};
+
+        /**
+         * effect id counter, used to store effects
+         */
+        var effectID = 0;
+
+        /**
+         * global effects volume
+         */
+        var effectVolume = 1;
+
+        /**
+         * preloaded sound files
+         */
+        var storage = {};
 
         return {
 
-        // background music
+        // ------------------------
+        // BACKGROUND MUSIC
+        // ------------------------
             background : {
 
                 play : function(file, loop) {
@@ -37,7 +61,7 @@ herman.namespace('audio.AudioPlayer', function() {
                 },
 
                 rewind : function() {
-                    background.play();
+                    background.play(0);
                 },
 
                 willPlay : function() {
@@ -56,44 +80,85 @@ herman.namespace('audio.AudioPlayer', function() {
                     background.setVolume();
                 }
             },
+        
+        // ------------------------
+        // SOUND EFFECTS
+        // ------------------------
+            effects : {
 
-        // Effects 
-            playEffect : function(file, loop, volume) {
+                play : function(file, loop) {
+                    effects[effectID] = new herman.audio.Sound(file, loop, effectVolume);
+                    return effectID;
+                },
+
+                getVolume : function() {
+                    return effectVolume;
+                },
+
+                setVolume : function(volume) {
+                    effectVolume = volume;
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.volume(effectVolume);
+                    });
+                },
+
+                pause : function(id) {
+                    effects[effectID] && effects[effectID].pause();
+                },
+
+                pauseAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.pause();
+                    });
+                },
+
+                resume : function(id) {
+                    effects[effectID] && effects[effectID].resume();
+                },
+
+                resumeAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.resume();
+                    });
+                },
+
+                stop : function(id) {
+                    effects[effectID] && effects[effectID].stop();
+                },
+
+                stopAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.stop();
+                    });
+                }
 
             },
 
-            getEffectsVolume : function() {
-                // body...
-            },
+        // ------------------------
+        // PRELOADER
+        // ------------------------
+            preloader : {
 
-            setEffectsVolume : function(volume) {
-                // body...
-            },
-
-            pauseEffect : function(id) {
-                // body...
-            },
-
-            pauseAllEffects : function() {
-                // body...
-            },
-
-            resumeEffect : function(id) {
-                // body...
-            },
-
-            resumeAllEffects : function() {
-                // body...
-            },
-
-            stopEffect : function(id) {
-                // body...
-            },
-
-            stopAllEffects : function() {
-                // body...
-            }
-
+                preload : function(manifest, callback) {
+                    var counter = 0;
+                    manifest.forEach(function(file) {
+                        var request = new XMLHttpRequest();
+                        request.open('GET', file, true);
+                        request.responseType = 'arraybuffer';
+                        request.onload = function(e) {
+                            storage[file] = request.repspone;
+                            counter++;
+                            if (counter === manifest.length) {
+                                callback && callback();
+                            }
+                        };
+                        request.onerror = function(e) {
+                            console.warn('Unable to load ' + file);    
+                        };
+                        request.send();    
+                    });
+                }  
+            }            
         };
 
     })();

@@ -822,21 +822,45 @@ herman.namespace("Text", function() {
 });
 
 
+// TODO: fix rewind
 herman.namespace('audio.AudioPlayer', function() {
     "use strict";
-
-// AudioPlayer 
     
     /**
      * influenced by cocos2d SimpleAudioEngine
      */
     var AudioPlayer = (function() {
 
-        var background;
+        /**
+         * background music instance
+         */
+        var background = null;
+
+        /**
+         * sound effects storage
+         */
+        var effects = {};
+
+        /**
+         * effect id counter, used to store effects
+         */
+        var effectID = 0;
+
+        /**
+         * global effects volume
+         */
+        var effectVolume = 1;
+
+        /**
+         * preloaded sound files
+         */
+        var storage = {};
 
         return {
 
-        // background music
+        // ------------------------
+        // BACKGROUND MUSIC
+        // ------------------------
             background : {
 
                 play : function(file, loop) {
@@ -860,7 +884,7 @@ herman.namespace('audio.AudioPlayer', function() {
                 },
 
                 rewind : function() {
-                    background.play();
+                    background.play(0);
                 },
 
                 willPlay : function() {
@@ -879,44 +903,85 @@ herman.namespace('audio.AudioPlayer', function() {
                     background.setVolume();
                 }
             },
+        
+        // ------------------------
+        // SOUND EFFECTS
+        // ------------------------
+            effects : {
 
-        // Effects 
-            playEffect : function(file, loop, volume) {
+                play : function(file, loop) {
+                    effects[effectID] = new herman.audio.Sound(file, loop, effectVolume);
+                    return effectID;
+                },
+
+                getVolume : function() {
+                    return effectVolume;
+                },
+
+                setVolume : function(volume) {
+                    effectVolume = volume;
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.volume(effectVolume);
+                    });
+                },
+
+                pause : function(id) {
+                    effects[effectID] && effects[effectID].pause();
+                },
+
+                pauseAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.pause();
+                    });
+                },
+
+                resume : function(id) {
+                    effects[effectID] && effects[effectID].resume();
+                },
+
+                resumeAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.resume();
+                    });
+                },
+
+                stop : function(id) {
+                    effects[effectID] && effects[effectID].stop();
+                },
+
+                stopAll : function() {
+                    Object.keys(effects).forEach(function(effect) {
+                        effect.stop();
+                    });
+                }
 
             },
 
-            getEffectsVolume : function() {
-                // body...
-            },
+        // ------------------------
+        // PRELOADER
+        // ------------------------
+            preloader : {
 
-            setEffectsVolume : function(volume) {
-                // body...
-            },
-
-            pauseEffect : function(id) {
-                // body...
-            },
-
-            pauseAllEffects : function() {
-                // body...
-            },
-
-            resumeEffect : function(id) {
-                // body...
-            },
-
-            resumeAllEffects : function() {
-                // body...
-            },
-
-            stopEffect : function(id) {
-                // body...
-            },
-
-            stopAllEffects : function() {
-                // body...
-            }
-
+                preload : function(manifest, callback) {
+                    var counter = 0;
+                    manifest.forEach(function(file) {
+                        var request = new XMLHttpRequest();
+                        request.open('GET', file, true);
+                        request.responseType = 'arraybuffer';
+                        request.onload = function(e) {
+                            storage[file] = request.repspone;
+                            counter++;
+                            if (counter === manifest.length) {
+                                callback && callback();
+                            }
+                        };
+                        request.onerror = function(e) {
+                            console.warn('Unable to load ' + file);    
+                        };
+                        request.send();    
+                    });
+                }  
+            }            
         };
 
     })();
@@ -926,15 +991,19 @@ herman.namespace('audio.AudioPlayer', function() {
     return AudioPlayer;
 
 });
-
+/**
+ * TODO: supported files
+ * TODO: better checks
+ * TODO: cross browser implementations
+ * TODO: remove Protoype?
+ */
 herman.namespace('audio.Sound', function() {
     "use strict";
 
-    var context;
+    // audio playback handled by WebAudio
+    var WebAudioSound = function() {
 
-    try {
-        var AudioContext = window.AudioContext || window.webkitAudioContext;
-        context = new AudioContext();
+        var context = new (window.AudioContext || window.webkitAudioContext)();
 
         // unlock ios 
         window.addEventListener('touchstart', function() {
@@ -945,106 +1014,159 @@ herman.namespace('audio.Sound', function() {
             source.start = source.start || source.noteOn;
             source.start(0);
         }, false);
-    }
-    catch(e) {
-        throw new Error('Web Audio API is not supported in this browser');
-    }
 
-    function createSource(buffer) {
-        var source = context.createBufferSource();
-        source.buffer = buffer;
+        function Sound(file, loop, volume) {    
+            var self = this;    
+            this.gainNode = null;
+            this.source = null;
+            this.startOffset = 0;
+            this.startTime = 0;
 
-        // attach gain node
-        var gain = context.createGain();
-        source.connect(gain);
-        gain.connect(context.destination);
+            this.loop   = (typeof loop === 'undefined') ? false : loop;
+            this.volume = (typeof volume === 'undefined') ? 1 : volume;
+            
+            var request = new XMLHttpRequest();
+            request.open('GET', file, true);
+            request.responseType = 'arraybuffer';
+            request.onload = function() {
+                context.decodeAudioData(request.response, 
+                    function(buffer) {
+                        self.buffer = buffer;
+                        self.play();
+                    }, 
+                    function(error) {
+                        console.warn('Unable to play background music ' + file);
+                    });
+            };
+            request.send();
+        }
 
-        // handle deprecated methods
-        // Web Audio API Change Log: Tue Sep 25 12:56:14 2012 -0700
-        source.start = source.start || source.noteOn;
-        source.stop = source.stop || source.noteOff;
+        Sound.prototype._createSource = function(buffer) {
+            var source = context.createBufferSource();
+            source.buffer = buffer;
 
-        return {
-            source : source,
-            gain : gain
+            // attach gain node
+            var gain = context.createGain();
+            source.connect(gain);
+            gain.connect(context.destination);
+
+            // handle deprecated methods
+            // Web Audio API Change Log: Tue Sep 25 12:56:14 2012 -0700
+            source.start = source.start || source.noteOn;
+            source.stop = source.stop || source.noteOff;
+
+            return {
+                source : source,
+                gain : gain
+            };
         };
-    }
 
-    function Sound(file, loop, volume) {    
-        var self = this;    
-        this.gainNode = null;
-        this.source = null;
-        this.startOffset = 0;
-        this.startTime = 0;
-
-        this.loop = (loop != 'undefined') ? loop : false;
-        this.volume = (volume != 'undefined') ? volume : 1;
-        
-        var request = new XMLHttpRequest();
-        request.open('GET', file, true);
-        request.responseType = 'arraybuffer';
-        request.onload = function() {
-            context.decodeAudioData(request.response, 
-                function(buffer) {
-                    self.buffer = buffer;
-                    self.play();
-                }, 
-                function(error) {
-                    console.warn('Unable to play background music ' + file);
-                });
+        Sound.prototype.setVolume = function(volume) {
+            if (this.gainNode) {
+                this.gainNode.gain.value = volume;    
+            }
         };
-        request.send();
-    }
 
-    Sound.prototype.setVolume = function(volume) {
-        if (this.gainNode) {
-            this.gainNode.gain.value = volume;    
+        Sound.prototype.getVolume = function() {
+            if (this.gainNode) {
+                return this.gainNode.gain.value;    
+            }
+        };
+
+        Sound.prototype.play = function(offset) {
+            this.stop();
+
+            var info = this._createSource(this.buffer);
+            this.source = info.source;
+            this.gainNode = info.gain;
+
+            // apply sound settings
+            this.source.loop = this.loop;
+            this.gainNode.gain.value = this.volume;
+
+            this.startTime = context.currentTime;
+            this.source.start(0, offset || 0); 
+        };
+
+        Sound.prototype.pause = function() {
+            this.stop();
+            this.startOffset += context.currentTime - this.startTime;
+        };
+
+        Sound.prototype.resume = function() {
+            this.play(this.startOffset % this.buffer.duration);
+        };
+
+        Sound.prototype.stop = function() {
+            if (this.source) {
+                this.source.stop(0);
+            }
+        };
+
+        Sound.prototype.isPlaying = function() {
+            if (this.source) {
+                return this.source.playbackState === this.source.PLAYING_STATE;
+            }
+        };
+
+        return Sound;
+    };
+
+    // audio playback handles by HTML5 Audio Tag 
+    var HTML5TagSound = function() {
+        function Sound(file, loop, volume) {   
+            this.loop   = (typeof loop === 'undefined') ? false : loop;
+            this.volume = (typeof volume === 'undefined') ? 1 : volume;
+
+            this.audio = document.createElement('audio');
+            this.audio.src = file;
+            this.audio.loop = this.loop;
+            this.audio.volume = this.volume; 
+            this.audio.play();
         }
-    };
 
-    Sound.prototype.setVolume = function(volume) {
-        if (this.gainNode) {
-            return this.gainNode.gain.value;    
-        }
-    };
+        Sound.prototype.setVolume = function(volume) {
+            this.audio.volume = volume;
+        };
 
-    Sound.prototype.play = function(offset) {
-        this.stop();
+        Sound.prototype.getVolume = function() {
+            return this.audio.volume;
+        };
 
-        var info = createSource(this.buffer);
-        this.source = info.source;
-        this.gainNode = info.gain;
+        Sound.prototype.play = function(offset) {
+            this.audio.currentTime = offset || 0;
+            this.audio.play();
+        };
 
-        // apply sound settings
-        this.source.loop = this.loop;
-        this.gainNode.gain.value = this.volume;
+        Sound.prototype.pause = function() {
+            this.audio.pause();
+        };
 
-        this.startTime = context.currentTime;
-        this.source.start(0, offset || 0); 
-    };
+        Sound.prototype.resume = function() {
+            this.audio.play();
+        };
 
-    Sound.prototype.pause = function() {
-        this.stop();
-        this.startOffset += context.currentTime - this.startTime;
-    };
+        Sound.prototype.stop = function() {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+        };
 
-    Sound.prototype.resume = function() {
-        this.play(this.startOffset % this.buffer.duration);
-    };
+        Sound.prototype.isPlaying = function() {
+            return !this.audio.paused; 
+        };
 
-    Sound.prototype.stop = function() {
-        if (this.source) {
-            this.source.stop(0);
-        }
-    };
-
-    Sound.prototype.isPlaying = function() {
-        if (this.source) {
-            return this.source.playbackState === this.source.PLAYING_STATE;
-        }
-    };
+        return Sound;
+    };    
 
 // expose
+    var Sound = null;
+    try {
+        Sound = WebAudioSound();        
+    }
+    catch(e) {
+        console.warn('Web Audio API is not supported in this browser');
+        Sound = HTML5TagSound();
+    }
     return Sound;
 
 });

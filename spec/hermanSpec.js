@@ -1,13 +1,9 @@
-describe('herman core', function() {
+describe('herman Sound', function() {
 
-    it('createModule', function() {
+    var Sound = herman.audio.Sound;
 
-        herman.namespace('canvas.Node', function() { return function Node() {} });
-        expect(herman.canvas.Node).not.toBe(null);
-        
-        herman.namespace('bla.foo.Func', function() { return { blub : 12 } });
-        expect(herman.bla.foo.Func.blub).toEqual(12);
-
+    it('is available', function() {
+        expect(Sound).not.toBe(null);
     });
     
 });

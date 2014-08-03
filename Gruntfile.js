@@ -11,6 +11,12 @@ module.exports = function(grunt) {
     'src/experimental/*.js'
   ];
 
+  var audioSrcFiles = [
+    'src/utils/polyfill.js',
+    'src/herman.js',
+    'src/audio/*.js'
+  ];
+
   // Project configuration.
   grunt.initConfig({
 
@@ -21,10 +27,14 @@ module.exports = function(grunt) {
     },
 
     concat: {
-       dist: {
+      all: {
         src: srcFiles,
         dest: 'build/<%= pkg.name %>.js'
-      }
+      },
+      audio: {
+        src: audioSrcFiles,
+        dest: 'build/<%= pkg.name %>.audio.js'
+      },
     },    
 
     yuidoc: {
@@ -55,8 +65,14 @@ module.exports = function(grunt) {
         src: 'build/<%= pkg.name %>.js',
         options: {
           display: 'full',
-          specs: 'spec/*Spec.js',
-          helpers: 'spec/*Helper.js'
+          specs: [
+            'spec/hermanSpec.js',
+            'spec/matrixSpec.js',
+            'spec/nodeSpec.js',
+            'spec/vectorSpec.js',
+            'spec/SoundSpec.js'
+          ],
+          host : 'http://localhost:8000'
         }
       }
     },
@@ -87,8 +103,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // tasks
-  grunt.registerTask('default', ['concat','jasmine']);
-  grunt.registerTask('build', ['jshint','concat','jasmine','uglify','yuidoc']);
+  grunt.registerTask('default', ['concat:all','connect','jasmine']);
+  grunt.registerTask('audio', ['concat:audio']);
+  grunt.registerTask('build', ['jshint','concat:all','uglify','connect','jasmine','yuidoc']);
   grunt.registerTask('serve', ['connect','watch']);
 
 };

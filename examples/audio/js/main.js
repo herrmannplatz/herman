@@ -1,6 +1,14 @@
 
 function init() {
 
+	var manifest = [
+		'./audio/All.mp3',
+		'./audio/Bass.mp3',
+		'./audio/Crunch.mp3'
+	];
+
+	herman.audio.AudioPlayer.preloader.preload(manifest);
+
 	var backgroundNodes = document.querySelectorAll('.sound-item.sound-item-background');
 	var backgroundItems = Array.prototype.slice.call(backgroundNodes);
 	var backgroundMusic = herman.audio.AudioPlayer.background;
