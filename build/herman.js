@@ -1015,6 +1015,26 @@ herman.namespace('audio.Sound', function() {
             source.start(0);
         }, false);
 
+        function createSource(buffer) {
+            var source = context.createBufferSource();
+            source.buffer = buffer;
+
+            // attach gain node
+            var gain = context.createGain();
+            source.connect(gain);
+            gain.connect(context.destination);
+
+            // handle deprecated methods
+            // Web Audio API Change Log: Tue Sep 25 12:56:14 2012 -0700
+            source.start = source.start || source.noteOn;
+            source.stop = source.stop || source.noteOff;
+
+            return {
+                source : source,
+                gain : gain
+            };
+        };
+
         function Sound(file, loop, volume) {    
             var self = this;    
             this.gainNode = null;
@@ -1041,26 +1061,6 @@ herman.namespace('audio.Sound', function() {
             request.send();
         }
 
-        Sound.prototype._createSource = function(buffer) {
-            var source = context.createBufferSource();
-            source.buffer = buffer;
-
-            // attach gain node
-            var gain = context.createGain();
-            source.connect(gain);
-            gain.connect(context.destination);
-
-            // handle deprecated methods
-            // Web Audio API Change Log: Tue Sep 25 12:56:14 2012 -0700
-            source.start = source.start || source.noteOn;
-            source.stop = source.stop || source.noteOff;
-
-            return {
-                source : source,
-                gain : gain
-            };
-        };
-
         Sound.prototype.setVolume = function(volume) {
             if (this.gainNode) {
                 this.gainNode.gain.value = volume;    
@@ -1074,18 +1074,20 @@ herman.namespace('audio.Sound', function() {
         };
 
         Sound.prototype.play = function(offset) {
-            this.stop();
+            if (this.source) {
+                this.stop();
 
-            var info = this._createSource(this.buffer);
-            this.source = info.source;
-            this.gainNode = info.gain;
+                var info = createSource(this.buffer);
+                this.source = info.source;
+                this.gainNode = info.gain;
 
-            // apply sound settings
-            this.source.loop = this.loop;
-            this.gainNode.gain.value = this.volume;
+                // apply sound settings
+                this.source.loop = this.loop;
+                this.gainNode.gain.value = this.volume;
 
-            this.startTime = context.currentTime;
-            this.source.start(0, offset || 0); 
+                this.startTime = context.currentTime;
+                this.source.start(0, offset || 0); 
+            } 
         };
 
         Sound.prototype.pause = function() {

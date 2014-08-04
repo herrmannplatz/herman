@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         src: audioSrcFiles,
         dest: 'build/<%= pkg.name %>.audio.js'
       },
-    },    
+    },
 
     yuidoc: {
       compile: {
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
         }
       }
     },
-    
+
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
         dest: 'build/<%= pkg.name %>.min.js'
       }
     },
-    
+
     jasmine: {
       pivotal: {
         src: 'build/<%= pkg.name %>.js',
@@ -70,7 +70,8 @@ module.exports = function(grunt) {
             'spec/matrixSpec.js',
             'spec/nodeSpec.js',
             'spec/vectorSpec.js',
-            'spec/SoundSpec.js'
+            'spec/SoundSpec.js',
+            'spec/AudioPlayerSpec.js'
           ],
           host : 'http://localhost:8000'
         }
@@ -107,5 +108,4 @@ module.exports = function(grunt) {
   grunt.registerTask('audio', ['concat:audio']);
   grunt.registerTask('build', ['jshint','concat:all','uglify','connect','jasmine','yuidoc']);
   grunt.registerTask('serve', ['connect','watch']);
-
 };
