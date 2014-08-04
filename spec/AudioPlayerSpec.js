@@ -6,7 +6,7 @@ describe('herman AudioPlayer', function() {
         expect(AudioPlayer).not.toBe(null);
     });
 
-    describe('methods', function() {
+    xdescribe('methods', function() {
 
         var manifest = [
             './audio/All.mp3',

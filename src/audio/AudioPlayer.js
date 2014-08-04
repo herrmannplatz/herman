@@ -103,7 +103,9 @@ herman.namespace('audio.AudioPlayer', function() {
                 },
 
                 pause : function(id) {
-                    effects[effectID] && effects[effectID].pause();
+                    if (effects[effectID]) {
+                        effects[effectID].pause();    
+                    }
                 },
 
                 pauseAll : function() {
@@ -113,7 +115,9 @@ herman.namespace('audio.AudioPlayer', function() {
                 },
 
                 resume : function(id) {
-                    effects[effectID] && effects[effectID].resume();
+                    if (effects[effectID]) {
+                        effects[effectID].resume();    
+                    }
                 },
 
                 resumeAll : function() {
@@ -123,7 +127,9 @@ herman.namespace('audio.AudioPlayer', function() {
                 },
 
                 stop : function(id) {
-                    effects[effectID] && effects[effectID].stop();
+                    if (effects[effectID]) {
+                        effects[effectID].stop();    
+                    }
                 },
 
                 stopAll : function() {
@@ -149,7 +155,9 @@ herman.namespace('audio.AudioPlayer', function() {
                             storage[file] = request.repspone;
                             counter++;
                             if (counter === manifest.length) {
-                                callback && callback();
+                                if(callback) {
+                                    callback();   
+                                } 
                             }
                         };
                         request.onerror = function(e) {

@@ -83,13 +83,15 @@ module.exports = function(grunt) {
       tasks: ['default'],
     },
 
-    connect: {
-        server: {
-            options: {
-                port: 8000,
-                base: '.'
-            }
-        }
+    karma: {
+      default: {
+        configFile: 'karma.conf.js'
+      },
+      build: {
+        configFile: 'karma.conf.js',
+        singleRun: true,
+        browsers: ['PhantomJS']
+      },
     }
 
   });
@@ -98,14 +100,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-karma');
 
   // tasks
-  grunt.registerTask('default', ['concat:all','connect','jasmine']);
+  grunt.registerTask('default', ['concat:all','karma:default']);
   grunt.registerTask('audio', ['concat:audio']);
-  grunt.registerTask('build', ['jshint','concat:all','uglify','connect','jasmine','yuidoc']);
-  grunt.registerTask('serve', ['connect','watch']);
+  grunt.registerTask('build', ['jshint','concat:all','uglify','karma:build','yuidoc']);
+  grunt.registerTask('serve', ['watch']);
 };

@@ -2,15 +2,22 @@
     "project": {
         "name": "herman",
         "description": "",
-        "version": "0.1.1",
+        "version": "0.0.0",
         "url": ""
     },
     "files": {
-        "build/herman.js": {
-            "name": "build/herman.js",
+        "build/herman.audio.js": {
+            "name": "build/herman.audio.js",
             "modules": {
                 "herman": 1
             },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "build/herman.js": {
+            "name": "build/herman.js",
+            "modules": {},
             "classes": {
                 "Matrix": 1,
                 "Vector": 1,
@@ -102,6 +109,68 @@
         }
     },
     "classitems": [
+        {
+            "file": "build/herman.audio.js",
+            "line": 19,
+            "itemtype": "property",
+            "name": "VERSION herman version",
+            "type": "Number",
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.audio.js",
+            "line": 24,
+            "description": "create namespace",
+            "itemtype": "method",
+            "name": "namespace",
+            "params": [
+                {
+                    "name": "namespace",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.audio.js",
+            "line": 44,
+            "description": "prototypical inheritance helper",
+            "params": [
+                {
+                    "name": "child",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "parent",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.audio.js",
+            "line": 66,
+            "description": "influenced by cocos2d SimpleAudioEngine",
+            "class": "Matrix",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.audio.js",
+            "line": 165,
+            "description": "TODO: supported files\nTODO: better checks\nTODO: cross browser implementations",
+            "class": "Matrix",
+            "module": "herman"
+        },
         {
             "file": "build/herman.js",
             "line": 19,
@@ -850,7 +919,56 @@
         },
         {
             "file": "build/herman.js",
-            "line": 827,
+            "line": 829,
+            "description": "influenced by cocos2d SimpleAudioEngine",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 834,
+            "description": "background music instance",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 839,
+            "description": "sound effects storage",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 844,
+            "description": "effect id counter, used to store effects",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 849,
+            "description": "global effects volume",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 854,
+            "description": "preloaded sound files",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 1002,
+            "description": "TODO: supported files\nTODO: better checks\nTODO: cross browser implementations\nTODO: remove Protoype?",
+            "class": "Sprite",
+            "module": "herman"
+        },
+        {
+            "file": "build/herman.js",
+            "line": 1187,
             "description": "Dom Node",
             "params": [
                 {
@@ -864,6 +982,18 @@
         }
     ],
     "warnings": [
+        {
+            "message": "Missing item type\nprototypical inheritance helper",
+            "line": " build/herman.audio.js:44"
+        },
+        {
+            "message": "Missing item type\ninfluenced by cocos2d SimpleAudioEngine",
+            "line": " build/herman.audio.js:66"
+        },
+        {
+            "message": "Missing item type\nTODO: supported files\nTODO: better checks\nTODO: cross browser implementations",
+            "line": " build/herman.audio.js:165"
+        },
         {
             "message": "Missing item type\nprototypical inheritance helper",
             "line": " build/herman.js:44"
@@ -1081,8 +1211,36 @@
             "line": " build/herman.js:802"
         },
         {
+            "message": "Missing item type\ninfluenced by cocos2d SimpleAudioEngine",
+            "line": " build/herman.js:829"
+        },
+        {
+            "message": "Missing item type\nbackground music instance",
+            "line": " build/herman.js:834"
+        },
+        {
+            "message": "Missing item type\nsound effects storage",
+            "line": " build/herman.js:839"
+        },
+        {
+            "message": "Missing item type\neffect id counter, used to store effects",
+            "line": " build/herman.js:844"
+        },
+        {
+            "message": "Missing item type\nglobal effects volume",
+            "line": " build/herman.js:849"
+        },
+        {
+            "message": "Missing item type\npreloaded sound files",
+            "line": " build/herman.js:854"
+        },
+        {
+            "message": "Missing item type\nTODO: supported files\nTODO: better checks\nTODO: cross browser implementations\nTODO: remove Protoype?",
+            "line": " build/herman.js:1002"
+        },
+        {
             "message": "Missing item type\nDom Node",
-            "line": " build/herman.js:827"
+            "line": " build/herman.js:1187"
         }
     ]
 }

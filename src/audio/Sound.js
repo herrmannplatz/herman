@@ -8,9 +8,10 @@ herman.namespace('audio.Sound', function() {
     "use strict";
 
     // audio playback handled by WebAudio
-    var WebAudioSound = function() {
+    var useWebAudioSound = function() {
 
-        var context = new (window.AudioContext || window.webkitAudioContext)();
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var context = new AudioContext();
 
         // unlock ios 
         window.addEventListener('touchstart', function() {
@@ -40,7 +41,7 @@ herman.namespace('audio.Sound', function() {
                 source : source,
                 gain : gain
             };
-        };
+        }
 
         function Sound(file, loop, volume) {    
             var self = this;    
@@ -122,7 +123,7 @@ herman.namespace('audio.Sound', function() {
     };
 
     // audio playback handles by HTML5 Audio Tag 
-    var HTML5TagSound = function() {
+    var useHTML5TagSound = function() {
         function Sound(file, loop, volume) {   
             this.loop   = (typeof loop === 'undefined') ? false : loop;
             this.volume = (typeof volume === 'undefined') ? 1 : volume;
@@ -170,11 +171,11 @@ herman.namespace('audio.Sound', function() {
 // expose
     var Sound = null;
     try {
-        Sound = WebAudioSound();        
+        Sound = useWebAudioSound();        
     }
     catch(e) {
         console.warn('Web Audio API is not supported in this browser');
-        Sound = HTML5TagSound();
+        Sound = useHTML5TagSound();
     }
     return Sound;
 
