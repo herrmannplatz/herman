@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     },
 
     yuidoc: {
-      release: {
+      deploy: {
         name: '<%= pkg.name %>',
         description: '<%= pkg.description %>',
         version: '<%= pkg.version %>',
@@ -56,10 +56,10 @@ module.exports = function(grunt) {
     },
 
     karma: {
-      build: {
+      test: {
         configFile: 'karma.conf.js'
       },
-      release: {
+      deploy: {
         configFile: 'karma.conf.js',
         singleRun: true,
         browsers: ['PhantomJS']
@@ -77,6 +77,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // tasks
-  grunt.registerTask('build', ['jshint:build','concat:build','uglify:build','karma:build']);
-  grunt.registerTask('release', ['build','yuidoc:release']);
+  grunt.registerTask('build', ['jshint:build','concat:build','uglify:build']);
+  grunt.registerTask('test', ['build','karma:test']);
+  grunt.registerTask('deploy', ['build','karma:deploy','yuidoc:deploy']);
 };
