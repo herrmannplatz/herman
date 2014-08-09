@@ -167,6 +167,7 @@ herman.namespace('math.Matrix', function() {
     /**
      * [rotate description]j
      * @param  {Number} angle radians
+     * @method rotate
      * @return {Matrix}
      */
     Matrix.prototype.rotate = function(angle) {
@@ -277,7 +278,7 @@ herman.namespace('math.Matrix', function() {
     };
 
     /**
-     * checks wether matrix is an identity matrix
+     * checks whether matrix is an identity matrix
      * @return {Boolean} 
      */
     Matrix.prototype.isIdentity = function() {
@@ -296,8 +297,8 @@ herman.namespace('math.Matrix', function() {
     };
 
     /**
-     * [clone description]
-     * @return {herman.math.Matrix} [description]
+     * clones matrix
+     * @return {herman.math.Matrix}
      */
     Matrix.prototype.clone = function() {
         var m = new Matrix();

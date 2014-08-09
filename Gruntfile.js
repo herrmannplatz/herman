@@ -11,34 +11,24 @@ module.exports = function(grunt) {
     'src/experimental/*.js'
   ];
 
-  var audioSrcFiles = [
-    'src/utils/polyfill.js',
-    'src/herman.js',
-    'src/audio/*.js'
-  ];
-
   // Project configuration.
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
 
     jshint: {
-      all: ['src/**/*.js']
+      build: ['src/**/*.js']
     },
 
     concat: {
-      all: {
+      build: {
         src: srcFiles,
         dest: 'build/<%= pkg.name %>.js'
-      },
-      audio: {
-        src: audioSrcFiles,
-        dest: 'build/<%= pkg.name %>.audio.js'
-      },
+      }
     },
 
     yuidoc: {
-      compile: {
+      release: {
         name: '<%= pkg.name %>',
         description: '<%= pkg.description %>',
         version: '<%= pkg.version %>',
@@ -60,38 +50,20 @@ module.exports = function(grunt) {
       }
     },
 
-    jasmine: {
-      pivotal: {
-        src: 'build/<%= pkg.name %>.js',
-        options: {
-          display: 'full',
-          specs: [
-            'spec/hermanSpec.js',
-            'spec/matrixSpec.js',
-            'spec/nodeSpec.js',
-            'spec/vectorSpec.js',
-            'spec/SoundSpec.js',
-            'spec/AudioPlayerSpec.js'
-          ],
-          host : 'http://localhost:8000'
-        }
-      }
-    },
-
     watch: {
       files: ['src/**/*'],
-      tasks: ['default'],
+      tasks: ['default']
     },
 
     karma: {
-      default: {
+      build: {
         configFile: 'karma.conf.js'
       },
-      build: {
+      release: {
         configFile: 'karma.conf.js',
         singleRun: true,
         browsers: ['PhantomJS']
-      },
+      }
     }
 
   });
@@ -105,8 +77,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // tasks
-  grunt.registerTask('default', ['concat:all','karma:default']);
-  grunt.registerTask('audio', ['concat:audio']);
-  grunt.registerTask('build', ['jshint','concat:all','uglify','karma:build','yuidoc']);
-  grunt.registerTask('serve', ['watch']);
+  grunt.registerTask('build', ['jshint:build','concat:build','uglify:build','karma:build']);
+  grunt.registerTask('release', ['build','yuidoc:release']);
 };
