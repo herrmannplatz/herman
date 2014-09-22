@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - "0.10"
-install:
+before_install:
   - npm install -g grunt-cli
 after_success:
   - echo "after_success"
