@@ -15,3 +15,5 @@ git push origin gh-pages
 
 # Go Back to master
 git checkout master
+
+echo "gh-pages updated"
