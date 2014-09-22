@@ -3,6 +3,3 @@ node_js:
   - "0.10"
 before_install:
   - npm install -g grunt-cli
-after_success:
-  - echo "after_success"
-  - scripts/update-gh-pages.sh
