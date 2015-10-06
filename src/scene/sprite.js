@@ -1,6 +1,6 @@
+var Node = require('./node');
 
-herman.namespace("Sprite", function() {
-    "use strict";
+class Sprite extends Node {
     
     /**
      * Sprite
@@ -8,19 +8,15 @@ herman.namespace("Sprite", function() {
      * @class Sprite
      * @constructor
      */
-    function Sprite(bitmap) {
-        herman.Node.call(this);
+    constructor(bitmap) {
+        super();
         this.bitmap = bitmap;
-
     }
 
-// proto
-    herman.inherits(Sprite, herman.Node);
-
-    Sprite.prototype.draw = function(context) {      
+    draw(context) {      
         context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
-    };
+    }
 
-    return Sprite;
+}
 
-});
+module.exports = Sprite;

@@ -1,49 +1,21 @@
 
-(function(window) {
+var herman = window.herman = {};    
 
-    /**
-     * @module herman
-     * @type {[type]}
-     */
-    var herman = window.herman = {};    
+require('./utils/polyfill');
 
-    /**
-     * @property {Number} VERSION herman version
-     */
-    herman.VERSION = 0;
+herman.math = {};
+herman.math.utils = require('./math/Vector');
+herman.math.Vector = require('./math/Vector');
+herman.math.Matrix = require('./math/Matrix');
 
-    /**
-     * create namespace
-     * @method namespace
-     * @param  {string} namespace 
-     */
-    herman.namespace = function(namespace, func) {
-        var ns = namespace.split('.'); // 'canvas.Node'
-        var module = ns.pop(); // 'Node'
-        var o = herman; 
+herman.Node = require('./scene/Node');
+herman.Sprite = require('./scene/Sprite');
+herman.Text = require('./scene/Text');
 
-        if(ns[0] === 'herman') {
-            ns.shift();
-        }
+herman.Renderer = require('./render/Renderer');
 
-        for(var i = 0; i < ns.length; i++){
-            o = o[ns[i]] = o[ns[i]] || {};
-        } 
-        o[module] = func.call(this);
-    };
+herman.audio = {};
+herman.audio.AudioPlayer = require('./audio/AudioPlayer');
+herman.audio.Sound = require('./audio/Sound');
 
-    /**
-     * prototypical inheritance helper
-     * @param  {Object} child  
-     * @param  {Object} parent
-     * @return {Object}        
-     */
-    herman.inherits = function inherits(child, parent) {
-        var o = Object.create(parent.prototype);
-        o.constructor = child;
-        child.prototype = o;
-        child.prototype.super = parent.prototype;
-        return child.prototype;
-    };
-
-})(window);
+herman.DomNode = require('./experimental/DomNode');

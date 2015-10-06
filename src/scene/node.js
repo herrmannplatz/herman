@@ -1,6 +1,7 @@
+const Vector = require('../math/Vector');
+const Matrix = require('../math/Matrix');
 
-herman.namespace('Node', function() {
-    "use strict";
+class Node {
 
     /**
      * Node
@@ -8,8 +9,8 @@ herman.namespace('Node', function() {
      * @class Node
      * @constructor
      */
-    function Node() {
-
+    constructor() {
+    
         /**
          * [tag description]
          * @type {[type]}
@@ -32,7 +33,7 @@ herman.namespace('Node', function() {
          * world transform
          * @type {herman}
          */
-        this.matrix = new herman.math.Matrix(); 
+        this.matrix = new Matrix(); 
 
         /**
          * [x description]
@@ -81,14 +82,14 @@ herman.namespace('Node', function() {
          * @type {Number}
          */
         this.height = 0;
-    }
+    } 
 
     /**
      * [update description]
      * @param  {[type]} context [description]
      * @return {[type]}         [description]
      */
-    Node.prototype.update = function(context) {  
+    update(context) {  
 
         // update and draw
         context.save();
@@ -100,20 +101,20 @@ herman.namespace('Node', function() {
         for ( var i = 0, len = this.children.length; i < len; i++ ) {
             this.children[i].update(context); 
         } 
-    };
+    }
 
     /**
      * [draw description]
      * @return {[type]} [description]
      */
-    Node.prototype.draw = function(context) {
+    draw(context) {
         // overwrite
-    };
+    }
         
     /**
      * update world matrix
      */
-    Node.prototype.updateMatrix = function(context) {  
+    updateMatrix(context) {  
 
         // build local matrix
         this.matrix.identity().transform(
@@ -132,7 +133,7 @@ herman.namespace('Node', function() {
 
         // update context transform
         context.setTransform(this.matrix.a11, this.matrix.a21, this.matrix.a12, this.matrix.a22, this.matrix.a13, this.matrix.a23); 
-    };
+    }
 
     /**
      * [localToGlobal description]
@@ -140,11 +141,11 @@ herman.namespace('Node', function() {
      * @param  {[type]} y [description]
      * @return {[type]}   [description]
      */
-    Node.prototype.localToGlobal = function(x, y) {
+    localToGlobal(x, y) {
         var m = this.matrix.clone();
         m.translate(x, y);
-        return new herman.math.Vector(m.a13, m.a23);
-    };
+        return new Vector(m.a13, m.a23);
+    }
 
     /**
      * [globalToLocal description]
@@ -152,103 +153,101 @@ herman.namespace('Node', function() {
      * @param  {[type]} y [description]
      * @return {[type]}   [description]
      */
-    Node.prototype.globalToLocal = function(x, y) {
+    globalToLocal(x, y) {
         // get mat, invert mat, append x,y
         var m = this.matrix.clone();
-        return new herman.math.Vector(x - m.a13, y - m.a23); // 600, 600 node 300, 300 -> 10, 10
-    };
+        return new Vector(x - m.a13, y - m.a23); // 600, 600 node 300, 300 -> 10, 10
+    }
 
     /**
      * [addChild description]
      * @param {[type]} child [description]
      */
-    Node.prototype.addChild = function(child) {
+    addChild(child) {
         this.addChildAt(child, this.children.length);
-    };
+    }
 
     /**
      * [addChildAt description]
      * @param {[type]} child [description]
      * @param {[type]} index [description]
      */
-    Node.prototype.addChildAt = function(child, index) {
+    addChildAt(child, index) {
         if(index < 0 || index > this.children.length) {
             throw new Error('index does not exist');
         }
-        if(child instanceof Node && !this.hasChild(child)) {
+        if(child && child.hasChild && !this.hasChild(child)) {
             if(child.parent) { 
                 child.parent.removeChild(child);
             }
             this.children.splice(index, 0, child);
             child.parent = this;    
         }
-    };
+    }
 
     /**
      * [removeChild description]
      * @param  {[type]} child [description]
      * @return {[type]}       [description]
      */
-    Node.prototype.removeChild = function(child) {
-        if(child instanceof Node && this.hasChild(child)) {
+    removeChild(child) {
+        if(this.hasChild(child)) {
             this.removeChildAt(this.children.indexOf(child));
         } else {
             throw new Error('object is not a child');
         }
-    };
+    }
 
     /**
      * [removeChildAt description]
      * @param  {[type]} index [description]
      * @return {[type]}       [description]
      */
-    Node.prototype.removeChildAt = function(index) {
+    removeChildAt(index) {
         if(index < 0 || index >= this.children.length) {
             throw new Error('index does not exist');
         }
         this.children[index].parent = null;
         this.children.splice(index, 1);
-    };
+    }
 
     /**
      * [hasChild description]
      * @param  {[type]}  child [description]
      * @return {Boolean}       [description]
      */
-    Node.prototype.hasChild = function(child) {
+    hasChild(child) {
         return this.children.indexOf(child) !== -1;
-    };
+    }
 
     /**
      * [getChildren description]
      * @return {[type]} [description]
      */
-    Node.prototype.getChildren = function() {
+    getChildren() {
         return this.children;
-    };
+    }
 
     /**
      * [getChildByTagName description]
      * @param  {[type]} name [description]
      * @return {[type]}      [description]
      */
-    Node.prototype.getChildByTagName = function(name) {
+    getChildByTagName(name) {
         // implement
-    };
+    }
 
     /**
      * [getChildAt description]
      * @param  {[type]} index [description]
      * @return {[type]}       [description]
      */
-    Node.prototype.getChildAt = function(index) {
+    getChildAt(index) {
         if(index < 0 || index >= this.children.length) {
             throw new Error('index does not exist');
         }
         return this.children[index];
-    };
+    }
+}
 
-// expose
-    return Node;
-
-});
+module.exports = Node;

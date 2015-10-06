@@ -1,13 +1,12 @@
 
-herman.namespace('math.Vector', function() {
-    "use strict";
+class Vector {
 
     /**
      * Vector
      * @class Vector
      * @constructor
      */
-    function Vector(x, y) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
         return this;
@@ -17,18 +16,18 @@ herman.namespace('math.Vector', function() {
      * [add description]
      * @param {[type]} vec [description]
      */
-    Vector.prototype.add  = function(vec) {
+    add(vec) {
         this.x += vec.x;
         this.y += vec.y;
         return this;
-    };
+    }
 
     /**
      * [substract description]
      * @param  {[type]} vec [description]
      * @return {[type]}     [description]
      */
-    Vector.prototype.substract = function(vec) {
+    substract(vec) {
         this.x -= vec.x;
         this.y -= vec.y;
         return this;
@@ -38,7 +37,7 @@ herman.namespace('math.Vector', function() {
      * [normalize description]
      * @return {[type]} [description]
      */
-    Vector.prototype.normalize = function() {
+    normalize() {
         var length = this.length();
         this.x /= length;
         this.y /= length;
@@ -50,18 +49,18 @@ herman.namespace('math.Vector', function() {
      * @param  {[type]} vec [description]
      * @return {[type]}     [description]
      */
-    Vector.prototype.dot = function(vec) {
+    dot(vec) {
         return this.x * vec.x + this.y * vec.y;
-    };
+    }
     
     /**
      * [length description]
      * @return {[type]} [description]
      */
-    Vector.prototype.length = function() {
+    length() {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    };
+    }
 
-    return Vector;
+}
 
-});
+module.exports = Vector

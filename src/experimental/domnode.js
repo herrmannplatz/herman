@@ -1,36 +1,34 @@
 
-herman.namespace("DomNode",function(){
+const Node = require('../scene/Node');
 
- /**
-  * Dom Node
-  * @param {HTMLDivElement} element
-  */
- function DomNode(element) {
-     herman.Node.call(this);
-        
-     if(!element) {
-         // dev style
-         this.element = document.createElement("div");
-         this.element.className = "div-node";
-         this.element.style.width = '100px';
-         this.element.style.height = '100px';
-         this.element.style.backgroundColor = 'white';
-         this.element.style.border = '1px solid red';    
-     } else {
-         this.element = element;
-     }   
+class DomNode extends Node {
 
-     // force gpu rendering
-     this.element.style.webkitPerspective = 1000;
-     this.element.style.webkitBackfaceVisibility = "hidden";
-     // node styles
-     this.element.style.position = "absolute";
-}
+    /**
+     * Dom Node
+     * @param {HTMLDivElement} element
+     */
+    constructor(element) {
+        super();
+        if(!element) {
+            // dev style
+            this.element = document.createElement("div");
+            this.element.className = "div-node";
+            this.element.style.width = '100px';
+            this.element.style.height = '100px';
+            this.element.style.backgroundColor = 'white';
+            this.element.style.border = '1px solid red';    
+        } else {
+            this.element = element;
+        }   
 
-// proto
-    herman.inherits(DomNode, herman.Node);
+        // force gpu rendering
+        this.element.style.webkitPerspective = 1000;
+        this.element.style.webkitBackfaceVisibility = "hidden";
+        // node styles
+        this.element.style.position = "absolute";
+    }
 
-    DomNode.prototype.update = function() {  
+    update() {  
 
         // update and draw
         this.updateMatrix(); 
@@ -40,9 +38,9 @@ herman.namespace("DomNode",function(){
         for ( var i = 0, len = this.children.length; i < len; i++ ) {
             this.children[i].update(); 
         } 
-    };
+    }
 
-    DomNode.prototype.updateMatrix = function() {
+    updateMatrix() {
         // build local matrix
         this.matrix.identity().transform(
             this.x + this.anchorX,
@@ -61,24 +59,22 @@ herman.namespace("DomNode",function(){
         // TODO cross browser
         var matrixString = 'matrix(' + this.matrix.a11 + ',' + this.matrix.a21 + ',' + this.matrix.a12 + ',' + this.matrix.a22 + ',' + this.matrix.a13 + ',' + this.matrix.a23 + ')'; 
         this.element.style.webkitTransform = matrixString;
-    };
+    }
 
-// scene
-     DomNode.prototype.addChild = function(child) {
-            
-         this.super.addChild.apply(this,arguments); // super
-        
-         //TODO use stage reference
-         this.updateMatrix();
-         document.getElementById('domStage').appendChild(child.element);
-     };
+    addChild(child) {
+        super.addChild.apply(this,arguments);
+    
+        //TODO use stage reference
+        this.updateMatrix();
+        document.getElementById('domStage').appendChild(child.element);
+    }
 
-     DomNode.prototype.removeChild = function(child) {
-         this.super.removeChild.apply(this,arguments); // super
-         //TODO use stage reference
-         document.getElementById('domStage').removeChild(child.element);
-     };
+    removeChild(child) {
+        super.removeChild.apply(this,arguments);
+        //TODO use stage reference
+        document.getElementById('domStage').removeChild(child.element);
+    }
 
-     return DomNode;
+}
 
-});
+module.exports = DomNode;

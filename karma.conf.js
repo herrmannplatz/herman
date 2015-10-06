@@ -15,8 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        'build/herman.min.js',
-        'build/herman.min.js',
+        'build/herman.js',
         'spec/**/*Spec.js'
     ],
 
@@ -62,6 +61,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   });
 };
