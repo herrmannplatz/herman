@@ -1,25 +1,22 @@
+var Node = require('./node');
 
-herman.namespace("Text", function() {
-    "use strict";
+class Text extends Node {
     
     /**
      * Text Node
      * @constructor
      */
-    function Text(text) {
-        herman.Node.call(this);
+    constructor(text) {
+        super();
         this.text = text;
     }
 
-// proto
-    herman.inherits(Text, herman.Node);
-
-    Text.prototype.draw = function(context) {
+    draw(context) {
         context.fillStyle = "#00F";
         context.font = "italic 30pt Arial";
         context.fillText(this.text, 20, 50);
-    };
+    }
 
-    return Text;
+}
 
-});
+module.exports = Text;

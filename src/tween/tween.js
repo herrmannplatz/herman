@@ -1,6 +1,5 @@
 
-herman.namespace('Tween', function() {
-    "use strict";
+class Tween {
 
     /**
      * flash like tweening object
@@ -14,7 +13,7 @@ herman.namespace('Tween', function() {
      * @param {Object} properties [description]
      * @param {Number} duration   [description]
      */
-    function Tween(target, properties, duration) {
+    constructor(target, properties, duration) {
 
             // tween object
         var tween = {},
@@ -83,7 +82,6 @@ herman.namespace('Tween', function() {
 
         return tween;
     }
+}
 
-    return Tween;
-
-});
+module.exports = Tween;

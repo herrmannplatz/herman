@@ -1,5 +1,6 @@
 //TODO: add jshint task
 {
+  "esnext": true,
   "curly": true,
   "browser": true,
   "indent": 4, 

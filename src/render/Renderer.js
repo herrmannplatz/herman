@@ -1,12 +1,10 @@
-
-herman.namespace('Renderer', function() {
-    "use strict";  
+class Renderer {
 
     /**
      * TODO: init with config
      * @param {HTMLCanvasElement} canvas 
      */
-    function Renderer(canvas) {
+    constructor(canvas) {
         this.canvas = canvas;
         this.context = this.canvas.getContext("2d"); 
         //this.context.webkitImageSmoothingEnabled = false;
@@ -20,24 +18,20 @@ herman.namespace('Renderer', function() {
         // this.canvas.style.height = this.height + 'px';
     }
 
-    Renderer.prototype = {
+    /**
+     * trigger node update
+     */
+    update(node) {
+        // clear
+        //this.canvas.width = this.canvas.width;
+        //this.context.fillStyle = '#FFFFFF';
+        //this.context.fillRect(0, 0, this.width, this.height);
+        this.context.clearRect(0, 0, this.width, this.height);
         
-        /**
-         * trigger node update
-         */
-        update: function(node) {
-            // clear
-            //this.canvas.width = this.canvas.width;
-            //this.context.fillStyle = '#FFFFFF';
-            //this.context.fillRect(0, 0, this.width, this.height);
-            this.context.clearRect(0, 0, this.width, this.height);
-            
-            // draw into buffer
-            node.update(this.context);
-        }
-        
-    };
+        // draw into buffer
+        node.update(this.context);
+    }
 
-    return Renderer;
+}
 
-});
+module.exports = Renderer;

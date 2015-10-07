@@ -2,21 +2,17 @@
   "name": "herman",
   "version": "0.0.0",
   "scripts": {
-    "test": "grunt deploy"
+    "test": "karma start",
+    "start": "gulp"
   },
   "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-uglify": "^0.6.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-contrib-yuidoc": "~0.5.2",
-    "grunt-karma": "^0.9.0",
+    "babelify": "^6.3.0",
+    "gulp": "^3.9.0",
+    "gulp-browserify": "^0.5.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.4.1",
     "karma": "^0.12.21",
-    "karma-chrome-launcher": "^0.1.4",
-    "karma-firefox-launcher": "^0.1.3",
     "karma-jasmine": "^0.2.3",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-safari-launcher": "^0.1.1"
+    "karma-phantomjs-launcher": "^0.1.4"
   }
 }
