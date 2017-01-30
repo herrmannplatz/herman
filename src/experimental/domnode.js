@@ -1,5 +1,5 @@
 
-const Node = require('../scene/Node');
+const Node = require('../scene/node');
 
 class DomNode extends Node {
 

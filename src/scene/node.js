@@ -1,5 +1,5 @@
-const Vector = require('../math/Vector');
-const Matrix = require('../math/Matrix');
+const Vector = require('../math/vector');
+const Matrix = require('../math/matrix');
 
 class Node {
 
