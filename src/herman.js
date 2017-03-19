@@ -1,8 +1,6 @@
 
 var herman = window.herman = {};    
 
-require('./utils/polyfill');
-
 herman.math = {};
 herman.math.utils = require('./math/utils');
 herman.math.Vector = require('./math/vector');
