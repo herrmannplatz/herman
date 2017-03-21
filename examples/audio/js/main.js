@@ -7,10 +7,12 @@ function init() {
 		'./audio/Crunch.mp3'
 	];
 
-	herman.audio.AudioPlayer.preloader.preload(manifest);
+	herman.audio.AudioPlayer.preloader.preload(manifest).then(function() {
+		console.log('all sounds preloaded')
+	})
 
 	var backgroundNodes = document.querySelectorAll('.sound-item.sound-item-background');
-	var backgroundItems = Array.prototype.slice.call(backgroundNodes);
+	var backgroundItems = Array.from(backgroundNodes);
 	var backgroundMusic = herman.audio.AudioPlayer.background;
 
 	backgroundItems.forEach(function(item) {

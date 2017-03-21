@@ -2,7 +2,7 @@
   "name": "herman",
   "version": "0.0.0",
   "scripts": {
-    "test": "standard && karma start",
+    "test": "karma start",
     "build": "webpack"
   },
   "devDependencies": {
@@ -16,5 +16,13 @@
     "standard": "^9.0.2",
     "uglifyjs-webpack-plugin": "^0.1.2",
     "webpack": "^2.2.1"
+  },
+  "standard": {
+    "ignore": [
+      "spec/",
+      "build/",
+      "examples/",
+      "karma.conf.js"
+    ]
   }
 }

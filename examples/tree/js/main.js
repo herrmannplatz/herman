@@ -35,13 +35,13 @@ function init() {
 		var counter = 0;
 		var i;
 		function update() {
-			requestAnimFrame(update);
+			requestAnimationFrame(update);
 
 			for( i = 0, len = nodes.length; i < len; i++ ) {
 				nodes[i].rotation = (counter++/10)%360;
 			}
 			renderer.update(stage);		
 		}
-		requestAnimFrame(update);	
+		requestAnimationFrame(update);	
 	}
 }

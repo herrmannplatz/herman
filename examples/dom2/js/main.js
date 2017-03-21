@@ -48,7 +48,7 @@ function init() {
 		function update() {
 			stats.begin();
 
-			requestAnimFrame(update);
+			requestAnimationFrame(update);
 			
 			var rotation = (counter++)%360;
 
@@ -59,6 +59,6 @@ function init() {
 
 			stats.end();
 		}
-		requestAnimFrame(update);	
+		requestAnimationFrame(update);	
 	}
 }

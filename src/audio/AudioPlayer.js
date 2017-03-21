@@ -1,171 +1,127 @@
-// TODO: fix rewind
-    
+import Sound from './Sound'
+
+/**
+* background music instance
+*/
+let background = null
+
+/**
+* sound effects storage
+*/
+let effects = {}
+
+/**
+* effect id counter, used to store effects
+*/
+let effectID = 0
+
+/**
+* global effects volume
+*/
+let effectVolume = 1
+
 /**
  * influenced by cocos2d SimpleAudioEngine
+ * TODO: fix rewind
  */
-var AudioPlayer = (function() {
+export default {
 
-    /**
-     * background music instance
-     */
-    var background = null;
+  background : {
 
-    /**
-     * sound effects storage
-     */
-    var effects = {};
+    play : function(file, loop) {
+        if(background) {
+            background.stop()
+            background = null
+        }
+        background = new Sound(file, loop)
+    },
 
-    /**
-     * effect id counter, used to store effects
-     */
-    var effectID = 0;
+    stop : function() {
+        background.stop()
+    },
 
-    /**
-     * global effects volume
-     */
-    var effectVolume = 1;
+    pause : function() {
+        background.pause()
+    },
 
-    /**
-     * preloaded sound files
-     */
-    var storage = {};
+    resume : function() {
+        background.resume()
+    },
 
-    return {
+    rewind : function() {
+        background.play(0);
+    },
 
-    // ------------------------
-    // BACKGROUND MUSIC
-    // ------------------------
-        background : {
+    willPlay : function() {
+        // body...
+    },
 
-            play : function(file, loop) {
-                if(background) {
-                    background.stop();
-                    background = null;
-                }
-                background = new herman.audio.Sound(file, loop);
-            },
+    isPlaying : function() {
+        background.isPlaying()
+    },
 
-            stop : function() {
-                background.stop();
-            },
+    getVolume : function() {
+        return background.volume
+    },
 
-            pause : function() {
-                background.pause();
-            },
+    setVolume : function(volume) {
+        background.volume = value
+    }
+  },
 
-            resume : function() {
-                background.resume();
-            },
+  effects : {
 
-            rewind : function() {
-                background.play(0);
-            },
+    play : function(file, loop) {
+        effects[effectID] = new Sound(file, loop, effectVolume)
+        return effectID
+    },
 
-            willPlay : function() {
-                // body...
-            },
+    getVolume : function() {
+        return effectVolume
+    },
 
-            isPlaying : function() {
-                background.isPlaying();
-            },    
+    setVolume : function(volume) {
+      effectVolume = volume
+      Object.entries(effects).forEach((effect) => effect.volume(volume))
+    },
 
-            getVolume : function() {
-                return background.getVolume();
-            },
+    pause : function(id) {
+        if (effects[effectID]) {
+            effects[effectID].pause()
+        }
+    },
 
-            setVolume : function(volume) {
-                background.setVolume();
-            }
-        },
-    
-    // ------------------------
-    // SOUND EFFECTS
-    // ------------------------
-        effects : {
+    pauseAll : function() {
+      Object.entries(effects).forEach((effect) => effect.pause())
+    },
 
-            play : function(file, loop) {
-                effects[effectID] = new herman.audio.Sound(file, loop, effectVolume);
-                return effectID;
-            },
+    resume : function(id) {
+        if (effects[effectID]) {
+            effects[effectID].resume()
+        }
+    },
 
-            getVolume : function() {
-                return effectVolume;
-            },
+    resumeAll : function() {
+        Object.entries(effects).forEach((effect) => effect.resume())
+    },
 
-            setVolume : function(volume) {
-                effectVolume = volume;
-                Object.keys(effects).forEach(function(effect) {
-                    effect.volume(effectVolume);
-                });
-            },
+    stop : function(id) {
+      if (effects[effectID]) {
+          effects[effectID].stop();
+      }
+    },
 
-            pause : function(id) {
-                if (effects[effectID]) {
-                    effects[effectID].pause();    
-                }
-            },
+    stopAll : function() {
+      Object.entries(effects).forEach((effect) => effect.stop())
+    }
 
-            pauseAll : function() {
-                Object.keys(effects).forEach(function(effect) {
-                    effect.pause();
-                });
-            },
+  },
 
-            resume : function(id) {
-                if (effects[effectID]) {
-                    effects[effectID].resume();    
-                }
-            },
+  preloader : {
 
-            resumeAll : function() {
-                Object.keys(effects).forEach(function(effect) {
-                    effect.resume();
-                });
-            },
+    preload : function(manifest) {
+      return Promise.all(manifest.map((src) => new Sound(src)))
+    }
+  }
 
-            stop : function(id) {
-                if (effects[effectID]) {
-                    effects[effectID].stop();    
-                }
-            },
-
-            stopAll : function() {
-                Object.keys(effects).forEach(function(effect) {
-                    effect.stop();
-                });
-            }
-
-        },
-
-    // ------------------------
-    // PRELOADER
-    // ------------------------
-        preloader : {
-
-            preload : function(manifest, callback) {
-                var counter = 0;
-                manifest.forEach(function(file) {
-                    var request = new XMLHttpRequest();
-                    request.open('GET', file, true);
-                    request.responseType = 'arraybuffer';
-                    request.onload = function(e) {
-                        storage[file] = request.repspone;
-                        counter++;
-                        if (counter === manifest.length) {
-                            if(callback) {
-                                callback();   
-                            } 
-                        }
-                    };
-                    request.onerror = function(e) {
-                        console.warn('Unable to load ' + file);    
-                    };
-                    request.send();    
-                });
-            }  
-        }            
-    };
-
-})();
-
-module.exports = AudioPlayer;
+}

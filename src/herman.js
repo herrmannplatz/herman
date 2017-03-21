@@ -1,19 +1,33 @@
+import Renderer from './render/Renderer'
 
-var herman = window.herman = {};    
+import Node from './scene/node'
+import Sprite from './scene/sprite'
+import Text from './scene/text'
 
-herman.math = {};
-herman.math.utils = require('./math/utils');
-herman.math.Vector = require('./math/vector');
-herman.math.Matrix = require('./math/matrix');
+import * as utils from './math/utils'
+import Vector from './math/vector'
+import Matrix from './math/matrix'
 
-herman.Node = require('./scene/node');
-herman.Sprite = require('./scene/sprite');
-herman.Text = require('./scene/text');
+import AudioPlayer from './audio/AudioPlayer'
+import Sound from './audio/Sound'
 
-herman.Renderer = require('./render/Renderer');
+import DomNode from './experimental/domnode'
 
-herman.audio = {};
-herman.audio.AudioPlayer = require('./audio/AudioPlayer');
-herman.audio.Sound = require('./audio/Sound');
+var herman = window.herman = {}
 
-herman.DomNode = require('./experimental/domNode');
+herman.math = {}
+herman.math.utils = utils
+herman.math.Vector = Vector
+herman.math.Matrix = Matrix
+
+herman.Node = Node
+herman.Sprite = Sprite
+herman.Text = Text
+
+herman.Renderer = Renderer
+
+herman.audio = {}
+herman.audio.AudioPlayer = AudioPlayer
+herman.audio.Sound = Sound
+
+herman.DomNode = DomNode

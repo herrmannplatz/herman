@@ -1,22 +1,12 @@
-var Node = require('./node');
+import Node from './node'
 
-class Sprite extends Node {
-    
-    /**
-     * Sprite
-     * 
-     * @class Sprite
-     * @constructor
-     */
-    constructor(bitmap) {
-        super();
-        this.bitmap = bitmap;
-    }
+export default class Sprite extends Node {
+  constructor (bitmap) {
+    super()
+    this.bitmap = bitmap
+  }
 
-    draw(context) {      
-        context.drawImage(this.bitmap, -this.bitmap.width/2, -this.bitmap.height/2);
-    }
-
+  draw (context) {
+    context.drawImage(this.bitmap, -this.bitmap.width / 2, -this.bitmap.height / 2)
+  }
 }
-
-module.exports = Sprite;
