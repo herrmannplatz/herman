@@ -31,8 +31,10 @@ export default class Sound {
   load () {
     fetchArrayBuffer(this.file)
     .then((buffer) => context.decodeAudioData(buffer))
-    .then((audioBuffer) => this.buffer = audioBuffer)
-    .catch((error) => console.warn('Unable to load sound' + this.file + error.message))
+    .then((audioBuffer) => {
+      this.buffer = audioBuffer
+      return this.buffer
+    }).catch((error) => console.warn('Unable to load sound' + this.file + error.message))
   }
 
   get loaded () {

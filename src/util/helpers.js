@@ -1,6 +1,6 @@
 export function fetchArrayBuffer (file) {
   return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
+    const xhr = new window.XMLHttpRequest()
     xhr.open('GET', file, true)
     xhr.responseType = 'arraybuffer'
     xhr.onload = function () {

@@ -2,7 +2,7 @@
   "name": "herman",
   "version": "0.0.0",
   "scripts": {
-    "test": "karma start",
+    "test": "standard && karma start",
     "build": "webpack"
   },
   "devDependencies": {
